@@ -91,6 +91,70 @@ faqs.unshift(...[
   {cat:'Supplements — Complete Database',q:'Can supplements improve my looks quickly?',short:'No supplement creates a fast guaranteed transformation.',answer:'Food, sleep, sunscreen, training and grooming are more important. Supplements can carry side effects, interactions and quality problems.',tips:['Use food-first habits.','Avoid mystery blends.','Ask a clinician or pharmacist first.']},
   {cat:'Mewing & Facial Bone Remodeling',q:'Do facial rollers remove wrinkles or change bone structure?',short:'They do not change bone structure or permanently erase wrinkles.',answer:'A roller can be a pleasant, gentle ritual for some people, but it is not a facial reshaping treatment.',tips:['Use light pressure.','Keep tools clean.','Avoid irritated or acne-prone areas.']}
 ]);
+const addLessons=(id,lessons)=>chapters.find(chapter=>chapter.id===id)?.lessons.push(...lessons);
+addLessons('foundations',[
+  ['Facial proportions explained','Use proportions as styling references, never as a beauty score.','Compare the whole face in normal light.','Use hair, glasses and facial hair to create balance.'],
+  ['Facial symmetry without obsession','Small left-right differences are normal and usually unnoticed.','Check with a relaxed expression in soft daylight.','Focus on grooming and comfort instead of repeated checking.'],
+  ['Face shape and glasses','Glasses can frame the face when the width and fit feel natural.','Try frames at normal viewing distance.','Choose comfort over rigid face-shape rules.'],
+  ['Face shape and facial hair','Facial hair can frame the lower face without changing anatomy.','Test one conservative length at a time.','Keep lines clean but not artificial.']
+]);
+addLessons('aesthetics',[
+  ['Cheeks and cheekbones','Cheek definition changes with light, expression and surrounding framing.','Use soft directional light in photos.','Avoid dehydration or extreme dieting.'],
+  ['Forehead and temple styling','Hair volume, parting and fringe can change upper-face framing.','Choose a style that suits your growth pattern.','Do not hide every feature out of anxiety.'],
+  ['Facial expressions that feel natural','A relaxed face reads better than a forced pose.','Relax the jaw, eyes and lips before a photo.','Avoid copying exaggerated online expressions.'],
+  ['Camera distance and lens distortion','A close wide lens can distort facial proportions.','Step back and use modest zoom.','Compare photos in consistent lighting.']
+]);
+addLessons('mewing',[
+  ['Facial exercise claims','Exercises may move muscles temporarily but do not predictably sculpt adult bone.','Use gentle mobility only when comfortable.','Stop if you feel jaw pain or headaches.'],
+  ['Jaw exerciser safety','Resistance devices can overload the jaw joint and muscles.','Choose normal chewing instead.','Do not train through clicking or pain.'],
+  ['The bone-smashing myth','Impact can injure bone, teeth, nerves and joints.','Avoid impact methods completely.','Seek qualified care for real jaw concerns.'],
+  ['Nose reshaping tricks','Pressure, clips and massage do not safely reshape adult noses.','Use hair, glasses and camera distance for balance.','Discuss functional concerns with a clinician.']
+]);
+addLessons('body',[
+  ['Comfortable standing posture','Posture is a moving range, not one rigid pose.','Stack head, ribs and pelvis gently.','Move regularly instead of holding tension.'],
+  ['Desk-friendly sitting posture','A comfortable setup makes movement easier.','Raise your screen and support your feet.','Change position often.'],
+  ['Walking with ease','A relaxed, steady walk improves comfort and presence.','Keep steps natural and eyes forward.','Do not force an exaggerated gait.'],
+  ['Core stability basics','A stronger trunk supports movement, not a permanently braced look.','Use controlled movements and breathing.','Progress gradually with good form.'],
+  ['Workout recovery','Recovery is part of progress.','Sleep, eat regularly and include easier days.','Do not add training when pain is building.']
+]);
+addLessons('skin',[
+  ['Understanding skin types','Skin can be dry, oily, mixed or sensitive, and can change over time.','Observe clean skin before buying many products.','Choose comfort over a strict label.'],
+  ['Moisturizing correctly','Moisturizer supports the skin barrier when skin feels dry or irritated.','Apply a suitable product to slightly damp skin.','Avoid fragranced products if they sting.'],
+  ['Product layering order','Simple layering prevents unnecessary irritation.','Apply treatment as directed, then moisturizer and daytime sunscreen.','Do not layer many strong actives together.'],
+  ['Morning skincare routine','A practical morning routine can be cleanser if needed, moisturizer and sunscreen.','Keep it quick enough to repeat.','Do not skip sun protection when outdoors.'],
+  ['Evening skincare routine','Night is a good time for gentle cleansing and a chosen treatment.','Use one active consistently.','Do not expect overnight results.'],
+  ['Shaving without unnecessary irritation','Good technique prevents avoidable bumps and burning.','Soften hair, use lubrication and a clean blade.','Use light passes instead of pressing.']
+]);
+addLessons('hair',[
+  ['Hair washing frequency','Wash based on scalp oil, sweat, flakes and product buildup.','Adjust frequency to comfort and hair type.','Do not follow a rigid internet schedule.'],
+  ['Gentle scalp care','Scalp health matters as much as hair styling.','Clean gently and rinse products well.','Seek care for persistent itch, redness or pain.'],
+  ['Dandruff: when to get help','Flakes may need scalp-focused treatment or a clinical check.','Follow suitable product labels consistently.','Get help for redness, soreness or shedding.'],
+  ['Styling for natural volume','A small amount of suitable product can add shape without stiffness.','Start with less product than you think.','Avoid excessive heat and buildup.'],
+  ['Using hair products well','Product choice depends on hair type and finish.','Test one product at a time.','Do not overload hair with oil, wax or spray.'],
+  ['Fine-hair styling','Fine hair often benefits from lighter products and a supportive cut.','Dry gently and style with minimal weight.','Avoid heavy layers that flatten it.']
+]);
+addLessons('grooming',[
+  ['The complete shower routine','Basic cleanliness is a high-impact grooming habit.','Wash body and scalp as needed and dry thoroughly.','Avoid harsh scrubbing.'],
+  ['Deodorant and odor prevention','Clean skin, clean clothing and suitable deodorant are usually enough.','Apply to clean, dry underarms.','Seek care for sudden strong odor or rash.'],
+  ['Hand-care routine','Hands are noticeable in everyday interactions.','Moisturize when dry and keep nails clean.','Do not cut cuticles aggressively.'],
+  ['Nail trimming and shaping','Short, clean nails look intentional and reduce snagging.','Trim gradually and file sharp edges.','Do not cut too close to the skin.'],
+  ['Foot hygiene','Comfortable, clean feet support daily movement and footwear.','Wash, dry and rotate shoes.','Seek care for persistent pain or skin changes.'],
+  ['Fragrance application basics','Fragrance should be subtle and optional.','Use a small amount after washing.','Do not overspray shared spaces.'],
+  ['Brushing technique','Gentle, consistent brushing supports oral health and a clean smile.','Use fluoride toothpaste twice daily.','See a dentist for pain or bleeding.'],
+  ['Flossing fundamentals','Cleaning between teeth supports gum health where a brush cannot reach.','Use a method that feels comfortable.','Ask a dentist or hygienist for technique help.']
+]);
+addLessons('routines',[
+  ['A 5-minute morning routine','A short routine is easier to keep on busy days.','Brush teeth, wash or refresh, apply sunscreen and choose clean clothes.','Do not make mornings overly complicated.'],
+  ['A 10-minute grooming routine','A small weekly reset keeps details under control.','Check nails, facial hair, hair products and outfit readiness.','Do not rush sharp tools.'],
+  ['The evening reset','Prepare for tomorrow before sleep.','Set out clothes, clean tools and reduce screens.','Do not sacrifice sleep for more optimization.'],
+  ['Professional profile photos','A good profile photo should look like you on a good normal day.','Use soft light, a clean background and normal camera distance.','Avoid heavy filters or misleading edits.'],
+  ['Natural social photos','The best social photos look relaxed and context-appropriate.','Use a simple outfit and natural expression.','Do not overpose or over-edit.']
+]);
+addLessons('mental',[
+  ['Avoiding unhealthy comparison','Comparison content can make normal features feel like flaws.','Curate feeds and take breaks when needed.','Do not use other people as your scorecard.'],
+  ['Realistic expectations','Presentation changes can be meaningful without transforming anatomy.','Set one observable, kind goal at a time.','Avoid promises of a total transformation.'],
+  ['Spotting fake transformations','Before-and-after photos can change through light, lens, pose, weight and editing.','Check whether conditions match.','Do not treat viral images as proof.']
+]);
 const root=document.querySelector('#view-root');
 const profileKey='auramax-web-profile';let profile=JSON.parse(localStorage.getItem(profileKey)||'null');
 const $=s=>document.querySelector(s); const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
