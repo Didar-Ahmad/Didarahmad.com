@@ -3,12 +3,28 @@
   if (!root) return;
 
   const goToCategories = () => document.querySelector('nav [data-view="hub"]')?.click();
+  const goHome = () => document.querySelector('#home')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const enhance = () => {
     const eyebrow = root.querySelector('.view-head .eyebrow')?.textContent?.trim();
     const existingBack = root.querySelector(':scope > .back');
 
-    if (eyebrow === 'LOOKSMAX COMPLETE GUIDE' || eyebrow === 'STYLING GUIDE') {
+    const categoryViews = new Set([
+      'LOOKSMAX COMPLETE GUIDE',
+      'LOOKSMAX Q&A',
+      'QUICK LOOKSMAX TIPS & TECHNIQUES',
+      'STYLING GUIDE',
+    ]);
+
+    if (eyebrow === 'EXPLORE AURAMAX' && !existingBack) {
+      const back = document.createElement('button');
+      back.className = 'text-link back';
+      back.textContent = '← Back to home';
+      back.addEventListener('click', goHome);
+      root.prepend(back);
+    }
+
+    if (categoryViews.has(eyebrow) && !existingBack) {
       if (!existingBack) {
         const back = document.createElement('button');
         back.className = 'text-link back';
