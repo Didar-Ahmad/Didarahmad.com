@@ -120,12 +120,12 @@ a { color: inherit; text-decoration: none; }
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(90deg, rgba(7, 9, 13, 0.9) 0%, rgba(7, 9, 13, 0.68) 25%, rgba(7, 9, 13, 0.46) 52%, rgba(7, 9, 13, 0.8) 100%),
+    linear-gradient(90deg, rgba(7, 9, 13, 0.7) 0%, rgba(7, 9, 13, 0.55) 28%, rgba(7, 9, 13, 0.4) 52%, rgba(7, 9, 13, 0.6) 100%),
     url('../assets/auramax-portrait.png');
   background-size: cover;
-  background-position: center 18%;
-  filter: saturate(1.1) contrast(1.12) brightness(0.72);
-  transform: scale(1.08);
+  background-position: center center;
+  filter: saturate(1.05) contrast(1.08) brightness(0.92);
+  transform: scale(1);
 }
 
 .hero::before {
