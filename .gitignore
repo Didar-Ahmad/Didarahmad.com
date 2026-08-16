@@ -1,9 +1,2 @@
-# Local YouTube API config (do NOT commit your API key)
-js/youtube-config.js
-
-# Node deps (if any)
 node_modules/
-
-# OS files
 .DS_Store
-Thumbs.db

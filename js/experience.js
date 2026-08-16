@@ -1,2 +1,0 @@
-const hero=document.querySelector('[data-hero]');const scene=document.querySelector('[data-tilt-scene]');
-if(hero&&scene&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){hero.addEventListener('pointermove',event=>{const rect=hero.getBoundingClientRect();const x=(event.clientX-rect.left)/rect.width-.5;const y=(event.clientY-rect.top)/rect.height-.5;scene.style.transform=`rotateY(${x*7}deg) rotateX(${y*-6}deg)`});hero.addEventListener('pointerleave',()=>scene.style.transform='rotateY(0) rotateX(0)')}

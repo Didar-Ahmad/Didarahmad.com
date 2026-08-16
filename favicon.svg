@@ -1,14 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-  <defs>
-    <style>
-      .da-text { font-family: Arial, sans-serif; font-weight: bold; font-size: 95px; fill: white; text-anchor: middle; dominant-baseline: middle; }
-      .da-bg { fill: url(#gradient); }
-    </style>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect class="da-bg" width="180" height="180" rx="40"/>
-  <text class="da-text" x="90" y="95">DA</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f0d6a2"/><stop offset="1" stop-color="#d08d6a"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="#0b0d10"/><path d="M18 18h28v28H18z" fill="none"/><path d="M20 46V18h8.5c7.2 0 12.5 4.3 12.5 11.5 0 7.1-5.3 11.5-12.5 11.5H20zm8.5-7.5c3.8 0 6.4-2.1 6.4-5.9 0-3.8-2.6-5.9-6.4-5.9H26v11.8h2.5z" fill="url(#g)"/><circle cx="48" cy="18" r="6" fill="#f0d6a2"/></svg>
