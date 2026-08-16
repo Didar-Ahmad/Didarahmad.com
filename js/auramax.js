@@ -155,6 +155,7 @@ addLessons('mental',[
   ['Realistic expectations','Presentation changes can be meaningful without transforming anatomy.','Set one observable, kind goal at a time.','Avoid promises of a total transformation.'],
   ['Spotting fake transformations','Before-and-after photos can change through light, lens, pose, weight and editing.','Check whether conditions match.','Do not treat viral images as proof.']
 ]);
+window.AuraMax={chapters,show,chapter,lesson};
 const root=document.querySelector('#view-root');
 const profileKey='auramax-web-profile';let profile=JSON.parse(localStorage.getItem(profileKey)||'null');
 const $=s=>document.querySelector(s); const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
