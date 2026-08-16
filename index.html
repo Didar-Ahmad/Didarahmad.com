@@ -3,146 +3,33 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="AuraMax is a luxury Looks Maxx guide and app launch brand for grooming, confidence, and style growth.">
-    <title>AuraMax | Looks Maxx Guide</title>
+    <meta name="description" content="AuraMax - a practical visual guide to grooming, style, confidence and healthy presentation.">
+    <title>AuraMax | The Practical Lookbook</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/auramax.css">
   </head>
   <body>
+    <div id="onboarding" class="onboarding" aria-modal="true" role="dialog"></div>
     <header class="site-header">
       <div class="container nav">
-        <a href="#top" class="brand" aria-label="AuraMax home">
-          <span class="brand-mark">A</span>
-          <span>AuraMax</span>
-        </a>
-
+        <a href="#home" class="brand"><span class="brand-mark">A</span><span>AuraMax</span></a>
         <nav class="nav-links" aria-label="Main navigation">
-          <a href="#system">System</a>
-          <a href="#principles">Principles</a>
-          <a href="#launch">Launch</a>
+          <button data-view="lookbook">Lookbook</button>
+          <button data-view="qa">Q&amp;A</button>
+          <button data-view="quick">Quick tips</button>
+          <button data-view="style">Style &amp; fashion</button>
         </nav>
-
+        <button id="profile-button" class="profile-button" aria-label="Edit guide profile">Profile</button>
       </div>
     </header>
-
-    <main id="top">
-      <section class="hero">
-        <div class="hero-bg" aria-hidden="true"></div>
-        <img class="hero-portrait-mobile" src="assets/auramax-portrait.png" alt="" aria-hidden="true" />
-        <div class="container hero-overlay">
-          <p class="launch-tag">Coming soon</p>
-        </div>
-      </section>
-
-      <section class="hero-details">
-        <div class="container hero-grid">
-          <div class="hero-copy-wrap">
-            <p class="eyebrow">Looks Maxx Guide</p>
-            <h1>
-              Upgrade your look.<br>
-              <span>Own your presence.</span>
-            </h1>
-            <p class="hero-copy">
-              AuraMax is a confidence-first growth system for men who want sharper grooming,
-              cleaner style, and stronger daily habits without the noise.
-            </p>
-
-            <div class="hero-actions">
-              <a class="button primary">Get Early Access</a>
-              <a class="button secondary">See the System</a>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <section class="quote-block">
-        <div class="container">
-          <blockquote>
-            “Your image is not vanity. It is identity, discipline, and first impressions working together.”
-            <small>AuraMax</small>
-          </blockquote>
-        </div>
-      </section>
-
-      <section id="system" class="system">
-        <div class="container">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow golden">Built for the next version of you</p>
-              <h2>Everything that elevates your image.</h2>
-            </div>
-            <span class="pill">coming soon</span>
-          </div>
-
-          <div class="feature-grid">
-            <article class="feature-card">
-              <div class="icon">✦</div>
-              <h3>Grooming System</h3>
-              <p>Daily routines for skin, hair, and presence that help you feel sharper every day.</p>
-            </article>
-
-            <article class="feature-card">
-              <div class="icon">◌</div>
-              <h3>Style Direction</h3>
-              <p>Learn what suits your face, frame, and lifestyle so your look feels intentional.</p>
-            </article>
-
-            <article class="feature-card">
-              <div class="icon">◎</div>
-              <h3>Confidence Playbook</h3>
-              <p>Small habits and mindset cues that keep your image disciplined and magnetic.</p>
-            </article>
-
-            <article class="feature-card">
-              <div class="icon">↗</div>
-              <h3>Daily Growth</h3>
-              <p>Track your progress with a system built to help you stay consistent and elevated.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="principles" class="principles">
-        <div class="container split">
-          <div class="principles-text">
-            <p class="eyebrow golden">Principles</p>
-            <h2>Looks maxx is not about chasing attention.</h2>
-            <p>
-              It is about building a standard. Better grooming, better posture, better habits,
-              and a stronger self-image that makes every first impression work in your favor.
-            </p>
-          </div>
-
-          <div class="principles-list">
-            <div><span>01</span> Grooming discipline</div>
-            <div><span>02</span> Identity and confidence</div>
-            <div><span>03</span> Stronger daily routines</div>
-            <div><span>04</span> Visible self-respect</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="launch" class="launch">
-        <div class="container">
-          <div class="cta-box">
-            <div>
-              <p class="eyebrow golden">Launch</p>
-              <h2>AuraMax is coming soon.</h2>
-            </div>
-            <a href="mailto:hello@auramax.app?subject=Join%20AuraMax%20Waitlist" class="button primary">Join the Waitlist</a>
-          </div>
-        </div>
-      </section>
+    <main id="app">
+      <section id="home" class="hero"><div class="hero-bg"></div><div class="container hero-content"><p class="eyebrow">THE PRACTICAL LOOKSMAXX HANDBOOK</p><h1>Build your best<br><em>everyday presence.</em></h1><p>Clear visual guides for grooming, skin, hair, style, health and confidence. No scores. No dangerous shortcuts.</p><div class="hero-actions"><button class="button primary" data-view="lookbook">Explore your lookbook</button><button class="button secondary" data-view="quick">Start with quick tips</button></div></div></section>
+      <section class="container dashboard-intro"><div><p class="eyebrow">YOUR GUIDE</p><h2 id="profile-heading">A guide built around you.</h2><p id="profile-copy">Choose your face shape and body type to start exploring.</p></div><button class="text-link" id="edit-profile">Edit profile →</button></section>
+      <section id="view-root" class="container view-root"></section>
     </main>
-
-    <footer class="site-footer">
-      <div class="container footer-wrap">
-        <span>© 2026 AuraMax</span>
-        <span>Looks Maxx Guide</span>
-      </div>
-    </footer>
+    <footer class="site-footer"><div class="container footer-wrap"><span>© 2026 AuraMax</span><span>Practical education, not medical advice.</span></div></footer>
+    <script type="module" src="js/auramax.js"></script>
   </body>
 </html>
