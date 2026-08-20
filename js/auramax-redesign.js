@@ -56,7 +56,7 @@ window.addEventListener('load', () => {
     let wasOpen = !onboarding.classList.contains('hidden');
     new MutationObserver(() => {
       const isOpen = !onboarding.classList.contains('hidden');
-      if (wasOpen && !isOpen) {
+      if (wasOpen && !isOpen && appRoot.dataset.auraView !== 'account') {
         requestAnimationFrame(() => show('hub'));
       }
       wasOpen = isOpen;
