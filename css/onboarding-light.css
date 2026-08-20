@@ -1,1 +1,26 @@
-.onboarding{background:linear-gradient(90deg,rgba(4,6,10,.62) 0%,rgba(4,6,10,.42) 47%,rgba(4,6,10,.18)),url('../assets/onboarding-face-body.png') center right/cover no-repeat}.choice{background:rgba(16,21,29,.78)}.onboard-panel>p{color:#e3ddd5}.onboard-top span:last-child{color:#e2dbd2}@media(max-width:700px){.onboarding{background:linear-gradient(180deg,rgba(4,6,10,.35),rgba(4,6,10,.75) 72%),url('../assets/onboarding-face-body.png') 63% top/auto 100% no-repeat}}
+/* Keep the portrait clear: on desktop the choices are beside it, and on phones they begin below it. */
+.onboarding {
+  position: fixed;
+  isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(4, 6, 10, .2) 0%, rgba(4, 6, 10, .06) 42%, rgba(4, 6, 10, .68) 64%, rgba(4, 6, 10, .92) 100%),
+    url('../assets/onboarding-face-body.png') center center / cover no-repeat;
+}
+.onboarding::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(4, 6, 10, .18), rgba(4, 6, 10, .1) 56%, rgba(4, 6, 10, .68)); pointer-events: none; }
+.onboard-shell { width: min(1180px, 100%); }
+.onboard-panel { width: min(710px, 100%); margin-left: auto; padding: clamp(90px, 13vh, 160px) 0 64px; }
+.onboard-panel>p, .onboard-top span:last-child { color: #e9e3dc; }
+.choice { background: rgba(13, 18, 27, .92); border-color: rgba(255, 255, 255, .18); box-shadow: 0 14px 30px rgba(0, 0, 0, .28); }
+.choice:hover, .choice:focus-visible { border-color: var(--gold); transform: translateY(-2px); }
+
+@media(max-width:700px) {
+  .onboarding { padding: 18px; background: linear-gradient(180deg, rgba(4,6,10,.04) 0%, rgba(4,6,10,.12) 34%, rgba(4,6,10,.88) 47%, #080a0e 100%), url('../assets/onboarding-face-body.png') 52% top/auto 48vh no-repeat, #080a0e; }
+  .onboarding::before { display: none; }
+  .onboard-shell { width: 100%; }
+  .onboard-panel { width: 100%; margin: 0; padding: clamp(260px, 43vh, 390px) 0 36px; }
+  .onboard-panel h1 { font-size: clamp(36px, 11vw, 52px); }
+  .onboard-panel>p { font-size: 15px; }
+  .choice-grid { gap: 10px; margin: 24px 0; }
+  .choice { min-height: 166px; padding: 12px 8px; }
+  .choice svg { width: 72px; height: 84px; }
+}
