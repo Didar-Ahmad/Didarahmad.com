@@ -60,10 +60,10 @@ const authRedirectUrl = mode => `${location.origin}${location.pathname}?auth=${m
 function authFormMarkup() {
   const note = supabase ? 'Your account, saved lessons and access sync securely with AuraMax.' : 'Preview mode is active. Add the AuraMax Supabase key to enable live accounts.';
   const status = '<p id="auth-status" class="auth-status" role="status" aria-live="polite"></p>';
-  if (authMode === 'signup') return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Create password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Use at least 8 characters. We will send a confirmation email before activating your account.</p>${status}<button class="button primary" type="submit" data-auth-submit>Create account</button><button class="text-link" type="button" data-auth-mode="signin">Already have an account? Sign in</button></form>`;
-  if (authMode === 'recovery') return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><p class="auth-note">We will email a secure link to choose a new password.</p>${status}<button class="button primary" type="submit" data-auth-submit>Send reset link</button><button class="text-link" type="button" data-auth-mode="signin">Back to sign in</button></form>`;
-  if (authMode === 'update') return `<form id="auth-form" class="auth-card"><label>New password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm new password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Choose a new password with at least 8 characters.</p>${status}<button class="button primary" type="submit" data-auth-submit>Update password</button></form>`;
-  return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Password<input required type="password" name="password" minlength="8" autocomplete="current-password"></label><p class="auth-note">${note}</p>${status}<button class="button primary" type="submit" data-auth-submit>Sign in</button><button class="text-link" type="button" data-auth-mode="signup">Create account</button><button class="text-link" type="button" data-auth-mode="recovery">Forgot password?</button></form>`;
+  if (authMode === 'signup') return `<form id="auth-form" class="auth-card" novalidate><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Create password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Use at least 8 characters. We will send a confirmation email before activating your account.</p>${status}<button class="button primary" type="submit" data-auth-submit>Create account</button><button class="text-link" type="button" data-auth-mode="signin">Already have an account? Sign in</button></form>`;
+  if (authMode === 'recovery') return `<form id="auth-form" class="auth-card" novalidate><label>Email<input required type="email" name="email" autocomplete="email"></label><p class="auth-note">We will email a secure link to choose a new password.</p>${status}<button class="button primary" type="submit" data-auth-submit>Send reset link</button><button class="text-link" type="button" data-auth-mode="signin">Back to sign in</button></form>`;
+  if (authMode === 'update') return `<form id="auth-form" class="auth-card" novalidate><label>New password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm new password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Choose a new password with at least 8 characters.</p>${status}<button class="button primary" type="submit" data-auth-submit>Update password</button></form>`;
+  return `<form id="auth-form" class="auth-card" novalidate><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Password<input required type="password" name="password" minlength="8" autocomplete="current-password"></label><p class="auth-note">${note}</p>${status}<button class="button primary" type="submit" data-auth-submit>Sign in</button><button class="text-link" type="button" data-auth-mode="signup">Create account</button><button class="text-link" type="button" data-auth-mode="recovery">Forgot password?</button></form>`;
 }
 
 function setAuthStatus(message, type = 'info') {
@@ -103,7 +103,7 @@ function bindAuthControls() {
   if (!form) return;
   form.addEventListener('submit', event => {
     event.preventDefault();
-    if (form.reportValidity()) submitAuthForm(form);
+    submitAuthForm(form);
   });
   root.querySelectorAll('[data-auth-mode]').forEach(button => {
     button.addEventListener('click', event => {
@@ -130,8 +130,7 @@ document.addEventListener('submit', event => {
   const form = event.target;
   if (!(form instanceof HTMLFormElement) || form.id !== 'auth-form' || !root.contains(form)) return;
   event.preventDefault();
-  event.stopPropagation();
-  if (form.reportValidity()) submitAuthForm(form);
+  submitAuthForm(form);
 }, true);
 
 function openSavedLesson(id) {
@@ -142,10 +141,27 @@ function openSavedLesson(id) {
 }
 
 async function submitAuthForm(form) {
+  if (form.dataset.submitting === 'true') return;
   const data = new FormData(form);
   const email = String(data.get('email') || '').trim();
   const password = String(data.get('password') || '');
   const confirmation = String(data.get('confirmPassword') || '');
+  const requiresEmail = authMode === 'signin' || authMode === 'signup' || authMode === 'recovery';
+  if (requiresEmail && !/^\S+@\S+\.\S+$/.test(email)) {
+    setAuthStatus('Enter a valid email address to continue.', 'error');
+    form.querySelector('input[name="email"]')?.focus();
+    return;
+  }
+  if (authMode !== 'recovery' && password.length < 8) {
+    setAuthStatus('Enter a password with at least 8 characters.', 'error');
+    form.querySelector('input[name="password"]')?.focus();
+    return;
+  }
+  if ((authMode === 'signup' || authMode === 'update') && password !== confirmation) {
+    setAuthStatus('The passwords do not match. Please enter them again.', 'error');
+    return;
+  }
+  form.dataset.submitting = 'true';
   const submit = form.querySelector('button[type="submit"]');
   if (submit) { submit.disabled = true; submit.textContent = 'Please wait…'; }
   setAuthStatus('Connecting securely…');
@@ -167,6 +183,7 @@ async function submitAuthForm(form) {
     console.error('AuraMax account action failed.', error);
     setAuthStatus('We could not complete that request. Please check your connection and try again.', 'error');
   } finally {
+    delete form.dataset.submitting;
     if (submit && root.contains(submit)) { submit.disabled = false; submit.textContent = authMode === 'signup' ? 'Create account' : authMode === 'recovery' ? 'Send reset link' : authMode === 'update' ? 'Update password' : 'Sign in'; }
   }
 }
