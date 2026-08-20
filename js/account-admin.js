@@ -114,6 +114,26 @@ function bindAuthControls() {
   });
 }
 
+// The account form is re-rendered whenever a visitor changes between sign-in,
+// registration and password recovery. Keep a document-level fallback so those
+// controls always work even if another view refresh replaces the form.
+document.addEventListener('click', event => {
+  const modeButton = event.target.closest?.('[data-auth-mode]');
+  if (!modeButton || !root.contains(modeButton)) return;
+  event.preventDefault();
+  event.stopPropagation();
+  authMode = modeButton.dataset.authMode || 'signin';
+  openAccount();
+}, true);
+
+document.addEventListener('submit', event => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement) || form.id !== 'auth-form' || !root.contains(form)) return;
+  event.preventDefault();
+  event.stopPropagation();
+  if (form.reportValidity()) submitAuthForm(form);
+}, true);
+
 function openSavedLesson(id) {
   for (const chapter of window.AuraMax.chapters) {
     const index = chapter.lessons.findIndex(lesson => lessonId(chapter, lesson) === id);
