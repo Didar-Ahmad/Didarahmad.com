@@ -44,7 +44,25 @@ function installNavigation() {
   document.addEventListener('click', event => { const viewControl = event.target.closest('[data-aura-view]'); if(viewControl){event.preventDefault();event.stopImmediatePropagation();show(viewControl.dataset.auraView);return;} const legacyControl=event.target.closest('[data-view]'); if(legacyControl){event.preventDefault();event.stopImmediatePropagation();show(legacyControl.dataset.view==='style'?'lookbook':legacyControl.dataset.view);return;} const chapterControl=event.target.closest('[data-aura-chapter]');if(chapterControl){event.preventDefault();event.stopImmediatePropagation();window.AuraMax.chapter(chapterControl.dataset.auraChapter);return;}if(event.target.closest('#open-admin')){event.preventDefault();event.stopImmediatePropagation();openGalleryAdmin();}}, true);
   document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show('hub');
 }
-window.addEventListener('load', () => { installNavigation(); connectGallery(); });
+window.addEventListener('load', () => {
+  installNavigation();
+  connectGallery();
+
+  // The original onboarding flow lives in a legacy module. When it completes,
+  // it renders the old hub directly, so bring the user back to the redesigned
+  // five-category hub instead.
+  const onboarding = document.querySelector('#onboarding');
+  if (onboarding) {
+    let wasOpen = !onboarding.classList.contains('hidden');
+    new MutationObserver(() => {
+      const isOpen = !onboarding.classList.contains('hidden');
+      if (wasOpen && !isOpen) {
+        requestAnimationFrame(() => show('hub'));
+      }
+      wasOpen = isOpen;
+    }).observe(onboarding, { attributes: true, attributeFilter: ['class'] });
+  }
+});
 
 async function openGalleryAdmin() {
   if (!galleryClient) { alert('To use shared gallery uploads, add the Supabase publishable key and run supabase/auramax_gallery.sql first.'); return; }
