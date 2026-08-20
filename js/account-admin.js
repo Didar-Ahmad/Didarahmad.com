@@ -284,12 +284,17 @@ function enhanceLookbookSaves() {
 loadLocalContent();
 await connectSupabase();
 updateAccountLabel();
-accountButton?.addEventListener('click', event => {
+document.addEventListener('click', event => {
+  if (!event.target.closest?.('#onboard-account')) return;
   event.preventDefault();
-  event.stopPropagation();
+  location.assign('account.html');
+}, true);
+
+if (new URLSearchParams(location.search).get('account') === '1') {
   document.querySelector('#onboarding')?.classList.add('hidden');
   openAccount();
-});
+  history.replaceState({}, '', location.pathname);
+}
 window.addEventListener('auramax:open-account', () => {
   authMode = 'signin';
   document.querySelector('#onboarding')?.classList.add('hidden');
