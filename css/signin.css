@@ -1,0 +1,37 @@
+/* Dedicated readable sign-in treatment over the AuraMax portrait. */
+.account-page:has(.auth-card) {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, .94) 0%, rgba(255, 255, 255, .82) 25%, rgba(255, 255, 255, .35) 45%, rgba(255, 255, 255, .04) 64%, transparent 100%),
+    url('../assets/signin-lookbook.png') center/cover no-repeat;
+}
+
+.account-page:has(.auth-card) .eyebrow { color: #9a6b28; }
+.account-page:has(.auth-card) h2 { color: #17130d; max-width: 420px; }
+.account-page:has(.auth-card) .auth-card {
+  background: rgba(255, 255, 255, .94);
+  border: 1px solid rgba(88, 64, 28, .18);
+  box-shadow: 0 18px 40px rgba(34, 25, 14, .18);
+}
+
+.account-page:has(.auth-card) .auth-card label { color: #312516; }
+.account-page:has(.auth-card) .auth-card input {
+  background: #fff;
+  color: #17130d;
+  border: 1px solid #bca578;
+}
+
+.account-page:has(.auth-card) .auth-card input:focus {
+  outline: 3px solid rgba(213, 175, 115, .32);
+  border-color: #8a622b;
+}
+
+.account-page:has(.auth-card) .auth-note { color: #5d5141; }
+.account-page:has(.auth-card) .text-link { color: #6e4a1a; font-weight: 700; }
+
+@media (max-width: 700px) {
+  .account-page:has(.auth-card) {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, .05) 0%, rgba(255, 255, 255, .68) 48%, rgba(255, 255, 255, .98) 67%),
+      url('../assets/signin-lookbook.png') 40% top/auto 100% no-repeat;
+  }
+}
