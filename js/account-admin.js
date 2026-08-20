@@ -58,10 +58,10 @@ const authRedirectUrl = mode => `${location.origin}${location.pathname}?auth=${m
 function authFormMarkup() {
   const note = supabase ? 'Your account, saved lessons and access sync securely with AuraMax.' : 'Preview mode is active. Add the AuraMax Supabase key to enable live accounts.';
   const status = '<p id="auth-status" class="auth-status" role="status" aria-live="polite"></p>';
-  if (authMode === 'signup') return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Create password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Use at least 8 characters. We will send a confirmation email before activating your account.</p>${status}<button class="button primary" type="submit">Create account</button><button class="text-link" type="button" data-auth-mode="signin">Already have an account? Sign in</button></form>`;
-  if (authMode === 'recovery') return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><p class="auth-note">We will email a secure link to choose a new password.</p>${status}<button class="button primary" type="submit">Send reset link</button><button class="text-link" type="button" data-auth-mode="signin">Back to sign in</button></form>`;
-  if (authMode === 'update') return `<form id="auth-form" class="auth-card"><label>New password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm new password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Choose a new password with at least 8 characters.</p>${status}<button class="button primary" type="submit">Update password</button></form>`;
-  return `<form id="auth-form" class="auth-card"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Password<input required type="password" name="password" minlength="8" autocomplete="current-password"></label><p class="auth-note">${note}</p>${status}<button class="button primary" type="submit">Sign in</button><button class="text-link" type="button" data-auth-mode="signup">Create account</button><button class="text-link" type="button" data-auth-mode="recovery">Forgot password?</button></form>`;
+  if (authMode === 'signup') return `<form id="auth-form" class="auth-card" onsubmit="window.AuraMax.submitAccount(event)"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Create password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Use at least 8 characters. We will send a confirmation email before activating your account.</p>${status}<button class="button primary" type="submit" onclick="window.AuraMax.submitAccount(event)">Create account</button><button class="text-link" type="button" data-auth-mode="signin">Already have an account? Sign in</button></form>`;
+  if (authMode === 'recovery') return `<form id="auth-form" class="auth-card" onsubmit="window.AuraMax.submitAccount(event)"><label>Email<input required type="email" name="email" autocomplete="email"></label><p class="auth-note">We will email a secure link to choose a new password.</p>${status}<button class="button primary" type="submit" onclick="window.AuraMax.submitAccount(event)">Send reset link</button><button class="text-link" type="button" data-auth-mode="signin">Back to sign in</button></form>`;
+  if (authMode === 'update') return `<form id="auth-form" class="auth-card" onsubmit="window.AuraMax.submitAccount(event)"><label>New password<input required type="password" name="password" minlength="8" autocomplete="new-password"></label><label>Confirm new password<input required type="password" name="confirmPassword" minlength="8" autocomplete="new-password"></label><p class="auth-note">Choose a new password with at least 8 characters.</p>${status}<button class="button primary" type="submit" onclick="window.AuraMax.submitAccount(event)">Update password</button></form>`;
+  return `<form id="auth-form" class="auth-card" onsubmit="window.AuraMax.submitAccount(event)"><label>Email<input required type="email" name="email" autocomplete="email"></label><label>Password<input required type="password" name="password" minlength="8" autocomplete="current-password"></label><p class="auth-note">${note}</p>${status}<button class="button primary" type="submit" onclick="window.AuraMax.submitAccount(event)">Sign in</button><button class="text-link" type="button" data-auth-mode="signup">Create account</button><button class="text-link" type="button" data-auth-mode="recovery">Forgot password?</button></form>`;
 }
 
 function setAuthStatus(message, type = 'info') {
@@ -88,15 +88,6 @@ function openAccount() {
   root.querySelectorAll('[data-open-lesson]').forEach(button => button.onclick = () => openSavedLesson(button.dataset.openLesson));
   root.querySelector('#open-admin')?.addEventListener('click', openAdmin);
   root.querySelector('#sign-out')?.addEventListener('click', signOut);
-  const authForm = root.querySelector('#auth-form');
-  authForm?.addEventListener('submit', signIn);
-  // Keep the primary action reliable on mobile browsers, where the redesigned
-  // screen can otherwise swallow a native form submit behind the guide layer.
-  authForm?.querySelector('button[type="submit"]')?.addEventListener('click', event => {
-    event.preventDefault();
-    event.stopPropagation();
-    signIn({ preventDefault() {}, stopPropagation() {}, currentTarget: authForm });
-  });
   root.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => { authMode = button.dataset.authMode; openAccount(); }));
   root.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -140,6 +131,17 @@ async function signIn(event) {
     if (submit && root.contains(submit)) { submit.disabled = false; submit.textContent = authMode === 'signup' ? 'Create account' : authMode === 'recovery' ? 'Send reset link' : authMode === 'update' ? 'Update password' : 'Sign in'; }
   }
 }
+
+// Used by the form's native submit and click attributes. Keeping this in the
+// global AuraMax namespace makes the account form dependable after the guide
+// view dynamically replaces its contents on mobile browsers.
+window.AuraMax.submitAccount = event => {
+  event.preventDefault();
+  event.stopPropagation();
+  const form = event.currentTarget?.closest?.('#auth-form') || root.querySelector('#auth-form');
+  if (form) signIn({ preventDefault() {}, stopPropagation() {}, currentTarget: form });
+  return false;
+};
 
 async function createAccount({ email, password, confirmation }) {
   if (password !== confirmation) return alert('Passwords do not match.');
@@ -230,24 +232,5 @@ window.addEventListener('auramax:open-account', () => {
   document.querySelector('#onboarding')?.classList.add('hidden');
   openAccount();
 });
-// Delegate account actions at document level so they remain usable after the
-// category renderer replaces the contents of the main view.
-document.addEventListener('click', event => {
-  const modeButton = event.target.closest('#auth-form [data-auth-mode]');
-  if (modeButton) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    authMode = modeButton.dataset.authMode;
-    openAccount();
-    return;
-  }
-
-  const submitButton = event.target.closest('#auth-form button[type="submit"]');
-  if (!submitButton) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const form = submitButton.closest('#auth-form');
-  if (form) signIn({ preventDefault() {}, stopPropagation() {}, currentTarget: form });
-}, true);
 new MutationObserver(enhanceLessons).observe(root, { childList: true, subtree: true });
 enhanceLessons();
