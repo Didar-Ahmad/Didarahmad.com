@@ -80,7 +80,15 @@ function openAccount() {
   root.querySelectorAll('[data-open-lesson]').forEach(button => button.onclick = () => openSavedLesson(button.dataset.openLesson));
   root.querySelector('#open-admin')?.addEventListener('click', openAdmin);
   root.querySelector('#sign-out')?.addEventListener('click', signOut);
-  root.querySelector('#auth-form')?.addEventListener('submit', signIn);
+  const authForm = root.querySelector('#auth-form');
+  authForm?.addEventListener('submit', signIn);
+  // Keep the primary action reliable on mobile browsers, where the redesigned
+  // screen can otherwise swallow a native form submit behind the guide layer.
+  authForm?.querySelector('button[type="submit"]')?.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    signIn({ preventDefault() {}, stopPropagation() {}, currentTarget: authForm });
+  });
   root.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => { authMode = button.dataset.authMode; openAccount(); }));
   root.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
