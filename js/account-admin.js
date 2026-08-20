@@ -43,6 +43,8 @@ function updateAccountLabel() {
 }
 
 function openAccount() {
+  // Mark this view so async gallery loading cannot redraw it as the category hub.
+  root.dataset.auraView = 'account';
   const email = session?.user?.email || localUser?.email;
   const activeSaved = saved();
   const savedLessons = window.AuraMax.chapters.flatMap(chapter => chapter.lessons.map(lesson => ({ chapter, lesson }))).filter(item => activeSaved.includes(lessonId(item.chapter, item.lesson)));
@@ -66,6 +68,7 @@ function openSavedLesson(id) {
 
 async function signIn(event) {
   event.preventDefault();
+  event.stopPropagation();
   const data = new FormData(event.currentTarget); const email = data.get('email').trim(); const password = data.get('password');
   if (supabase) { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) return alert(error.message); }
   else { localUser = { email }; localStorage.setItem('auramax-local-user', JSON.stringify(localUser)); }
@@ -132,6 +135,10 @@ function enhanceLessons() {
 loadLocalContent();
 await connectSupabase();
 updateAccountLabel();
-accountButton?.addEventListener('click', openAccount);
+accountButton?.addEventListener('click', event => {
+  event.preventDefault();
+  event.stopPropagation();
+  openAccount();
+});
 new MutationObserver(enhanceLessons).observe(root, { childList: true, subtree: true });
 enhanceLessons();

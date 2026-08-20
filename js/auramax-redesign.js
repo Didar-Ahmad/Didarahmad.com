@@ -20,7 +20,11 @@ async function connectGallery() {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
     galleryClient = createClient(config.supabaseUrl, config.supabasePublishableKey);
     const { data, error } = await galleryClient.from('auramax_gallery_items').select('*').eq('is_published', true).order('created_at', { ascending: false });
-    if (!error && Array.isArray(data)) { galleryItems = data; renderCurrentView(); }
+    if (!error && Array.isArray(data)) {
+      galleryItems = data;
+      // Do not replace the account/sign-in screen when this background request finishes.
+      if (appRoot.dataset.auraView !== 'account') renderCurrentView();
+    }
   } catch (error) { console.warn('Gallery data is using local preview mode.', error); }
 }
 function backButton() { return '<button class="text-link back" data-aura-view="hub">← All categories</button>'; }
