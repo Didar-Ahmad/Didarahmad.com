@@ -202,6 +202,12 @@ updateAccountLabel();
 accountButton?.addEventListener('click', event => {
   event.preventDefault();
   event.stopPropagation();
+  document.querySelector('#onboarding')?.classList.add('hidden');
+  openAccount();
+});
+window.addEventListener('auramax:open-account', () => {
+  authMode = 'signin';
+  document.querySelector('#onboarding')?.classList.add('hidden');
   openAccount();
 });
 new MutationObserver(enhanceLessons).observe(root, { childList: true, subtree: true });
