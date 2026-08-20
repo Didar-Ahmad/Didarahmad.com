@@ -2,6 +2,7 @@ const config = window.AURAMAX_CONFIG || {};
 const savedKey = 'auramax-web-saved-lessons';
 const contentKey = 'auramax-admin-content';
 const imageKey = 'auramax-admin-images';
+const savedGalleryKey = 'auramax-saved-gallery-items';
 let supabase = null;
 let session = null;
 let localUser = JSON.parse(localStorage.getItem('auramax-local-user') || 'null');
@@ -12,6 +13,7 @@ const accountButton = document.querySelector('#account-button');
 const adminEmails = (config.adminEmails || []).map(email => email.toLowerCase());
 const isAdmin = () => adminEmails.includes((session?.user?.email || localUser?.email || '').toLowerCase());
 const saved = () => JSON.parse(localStorage.getItem(savedKey) || '[]');
+const savedGallery = () => JSON.parse(localStorage.getItem(savedGalleryKey) || '[]');
 const images = () => JSON.parse(localStorage.getItem(imageKey) || '{}');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const lessonId = (chapter, lesson) => `${chapter.id}:${lesson[0]}`;
@@ -83,12 +85,33 @@ function openAccount() {
   const email = session?.user?.email || localUser?.email;
   const activeSaved = saved();
   const savedLessons = window.AuraMax.chapters.flatMap(chapter => chapter.lessons.map(lesson => ({ chapter, lesson }))).filter(item => activeSaved.includes(lessonId(item.chapter, item.lesson)));
-  root.innerHTML = `<button class="text-link back" data-return>← Back to categories</button><section class="account-page"><p class="eyebrow">YOUR AURAMAX ACCOUNT</p><h2>${authMode === 'update' ? 'Choose your new password.' : email ? `Welcome, ${esc(email.split('@')[0])}.` : authMode === 'signup' ? 'Create your AuraMax account.' : authMode === 'recovery' ? 'Reset your password.' : 'Sign in to keep your saved lessons.'}</h2>${email && authMode !== 'update' ? `<div class="account-grid"><article><h3>Subscription</h3><p>${session ? 'Signed in — subscription status syncs with your payment record.' : 'Preview mode — connect Supabase to sync subscription status.'}</p></article><article><h3>Saved lessons</h3><p>${savedLessons.length} lesson${savedLessons.length === 1 ? '' : 's'} saved on this device.</p>${savedLessons.map(({chapter,lesson}) => `<button class="saved-link" data-open-lesson="${esc(lessonId(chapter,lesson))}">${esc(chapter.name)} · ${esc(lesson[0])}</button>`).join('') || '<p>Save a lesson while reading to find it here.</p>'}</article></div><div class="account-links">${isAdmin() ? '<button class="button primary" id="open-admin">Open admin dashboard</button>' : ''}<button class="text-link" id="sign-out">Sign out</button></div>` : authFormMarkup()}</section>`;
+  root.innerHTML = `<button class="text-link back" data-return>← Back to categories</button><section class="account-page"><p class="eyebrow">YOUR AURAMAX ACCOUNT</p><h2>${authMode === 'update' ? 'Choose your new password.' : email ? `Welcome, ${esc(email.split('@')[0])}.` : authMode === 'signup' ? 'Create your AuraMax account.' : authMode === 'recovery' ? 'Reset your password.' : 'Sign in to keep your saved lessons.'}</h2>${email && authMode !== 'update' ? `<div class="account-grid"><article><h3>Saved lessons</h3><p>${savedLessons.length} lesson${savedLessons.length === 1 ? '' : 's'} saved on this device.</p>${savedLessons.map(({chapter,lesson}) => `<button class="saved-link" data-open-lesson="${esc(lessonId(chapter,lesson))}">${esc(chapter.name)} · ${esc(lesson[0])}</button>`).join('') || '<p>Save a lesson while reading to find it here.</p>'}</article><article><h3>Saved LookBook ideas</h3><p>${savedGallery().length} outfit idea${savedGallery().length === 1 ? '' : 's'} saved.</p><button class="saved-link" id="open-lookbook">Browse and save style ideas →</button></article><article><h3>Your progress</h3><p>Return to saved lessons and outfit ideas whenever you need them.</p></article></div><div class="account-links">${isAdmin() ? '<button class="button primary" id="open-admin">Open content admin</button><button class="button secondary" id="open-gallery-admin">Upload LookBook image</button>' : ''}<button class="text-link" id="sign-out">Sign out</button></div>` : authFormMarkup()}</section>`;
   root.querySelector('[data-return]').onclick = () => window.AuraMax.show('hub');
   root.querySelectorAll('[data-open-lesson]').forEach(button => button.onclick = () => openSavedLesson(button.dataset.openLesson));
   root.querySelector('#open-admin')?.addEventListener('click', openAdmin);
+  root.querySelector('#open-gallery-admin')?.addEventListener('click', () => window.AuraMax.openGalleryAdmin?.());
+  root.querySelector('#open-lookbook')?.addEventListener('click', () => window.AuraMax.show('lookbook'));
   root.querySelector('#sign-out')?.addEventListener('click', signOut);
+  bindAuthControls();
   root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Account markup is replaced each time the mode changes. Bind to those real
+// controls immediately instead of relying on a document-level delegated event.
+function bindAuthControls() {
+  const form = root.querySelector('#auth-form');
+  if (!form) return;
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (form.reportValidity()) submitAuthForm(form);
+  });
+  root.querySelectorAll('[data-auth-mode]').forEach(button => {
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      authMode = button.dataset.authMode || 'signin';
+      openAccount();
+    });
+  });
 }
 
 function openSavedLesson(id) {
@@ -127,32 +150,6 @@ async function submitAuthForm(form) {
     if (submit && root.contains(submit)) { submit.disabled = false; submit.textContent = authMode === 'signup' ? 'Create account' : authMode === 'recovery' ? 'Send reset link' : authMode === 'update' ? 'Update password' : 'Sign in'; }
   }
 }
-
-// The account view is rendered dynamically, so attach one delegated handler
-// to its stable container. It works for clicks, Enter-key submits and every
-// authentication screen without relying on inline JavaScript attributes.
-root.addEventListener('submit', event => {
-  const form = event.target;
-  if (!(form instanceof HTMLFormElement) || form.id !== 'auth-form') return;
-  event.preventDefault();
-  if (!form.reportValidity()) return;
-  submitAuthForm(form);
-});
-
-root.addEventListener('click', event => {
-  const modeButton = event.target.closest('[data-auth-mode]');
-  if (modeButton && root.contains(modeButton)) {
-    event.preventDefault();
-    authMode = modeButton.dataset.authMode || 'signin';
-    openAccount();
-    return;
-  }
-  const submitButton = event.target.closest('#auth-form [data-auth-submit]');
-  if (!submitButton || !root.contains(submitButton)) return;
-  event.preventDefault();
-  const form = submitButton.closest('form');
-  if (form?.reportValidity()) submitAuthForm(form);
-});
 
 async function createAccount({ email, password, confirmation }) {
   if (password !== confirmation) return alert('Passwords do not match.');
@@ -229,6 +226,24 @@ function enhanceLessons() {
   if (image) { const figure = document.createElement('figure'); figure.className = 'lesson-admin-image'; figure.innerHTML = `<img src="${image}" alt="${esc(title)}"><figcaption>Lesson illustration</figcaption>`; reader.querySelector('h1')?.insertAdjacentElement('afterend', figure); }
 }
 
+function enhanceLookbookSaves() {
+  root.querySelectorAll('.lookbook-card').forEach(card => {
+    if (card.querySelector('.save-lookbook')) return;
+    const title = card.querySelector('h3')?.textContent || '';
+    const id = `lookbook:${title}`;
+    const button = document.createElement('button');
+    button.className = 'text-link save-lookbook';
+    button.textContent = savedGallery().includes(id) ? '★ Saved outfit' : '☆ Save outfit';
+    button.addEventListener('click', () => {
+      const current = savedGallery();
+      const next = current.includes(id) ? current.filter(value => value !== id) : [...current, id];
+      localStorage.setItem(savedGalleryKey, JSON.stringify(next));
+      button.textContent = next.includes(id) ? '★ Saved outfit' : '☆ Save outfit';
+    });
+    card.querySelector('div')?.append(button);
+  });
+}
+
 loadLocalContent();
 await connectSupabase();
 updateAccountLabel();
@@ -243,5 +258,6 @@ window.addEventListener('auramax:open-account', () => {
   document.querySelector('#onboarding')?.classList.add('hidden');
   openAccount();
 });
-new MutationObserver(enhanceLessons).observe(root, { childList: true, subtree: true });
+new MutationObserver(() => { enhanceLessons(); enhanceLookbookSaves(); }).observe(root, { childList: true, subtree: true });
 enhanceLessons();
+enhanceLookbookSaves();

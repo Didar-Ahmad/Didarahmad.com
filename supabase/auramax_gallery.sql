@@ -14,3 +14,24 @@ drop policy if exists "AuraMax admins update gallery images" on storage.objects;
 drop policy if exists "AuraMax admins delete gallery images" on storage.objects;
 create policy "AuraMax admins update gallery images" on storage.objects for update to authenticated using (bucket_id = 'auramax-gallery' and lower(coalesce(auth.jwt() ->> 'email', '')) = 'info@anonzou.com');
 create policy "AuraMax admins delete gallery images" on storage.objects for delete to authenticated using (bucket_id = 'auramax-gallery' and lower(coalesce(auth.jwt() ->> 'email', '')) = 'info@anonzou.com');
+
+-- A signed-in user's saved items sync across their devices.
+create table if not exists public.auramax_saved_lessons (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  lesson_id text not null,
+  lesson_title text not null,
+  created_at timestamptz not null default now(),
+  primary key (user_id, lesson_id)
+);
+create table if not exists public.auramax_saved_gallery_items (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  gallery_item_id uuid not null references public.auramax_gallery_items(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (user_id, gallery_item_id)
+);
+alter table public.auramax_saved_lessons enable row level security;
+alter table public.auramax_saved_gallery_items enable row level security;
+drop policy if exists "Users manage their AuraMax saved lessons" on public.auramax_saved_lessons;
+create policy "Users manage their AuraMax saved lessons" on public.auramax_saved_lessons for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+drop policy if exists "Users manage their AuraMax saved gallery" on public.auramax_saved_gallery_items;
+create policy "Users manage their AuraMax saved gallery" on public.auramax_saved_gallery_items for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
