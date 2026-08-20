@@ -218,5 +218,24 @@ window.addEventListener('auramax:open-account', () => {
   document.querySelector('#onboarding')?.classList.add('hidden');
   openAccount();
 });
+// Delegate account actions at document level so they remain usable after the
+// category renderer replaces the contents of the main view.
+document.addEventListener('click', event => {
+  const modeButton = event.target.closest('#auth-form [data-auth-mode]');
+  if (modeButton) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    authMode = modeButton.dataset.authMode;
+    openAccount();
+    return;
+  }
+
+  const submitButton = event.target.closest('#auth-form button[type="submit"]');
+  if (!submitButton) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const form = submitButton.closest('#auth-form');
+  if (form) signIn({ preventDefault() {}, stopPropagation() {}, currentTarget: form });
+}, true);
 new MutationObserver(enhanceLessons).observe(root, { childList: true, subtree: true });
 enhanceLessons();
