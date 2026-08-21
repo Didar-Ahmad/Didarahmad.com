@@ -66,7 +66,7 @@ function backButton() { return '<button class="text-link back" data-aura-view="h
 function renderHub() {
   const visuals = {
     colours: '<div class="aura-card-visual visual-colours" aria-hidden="true"><i></i><i></i><i></i><i></i><b>Palette</b></div>',
-    lookbook: '<div class="aura-card-visual visual-lookbook" aria-hidden="true"><i></i><i></i><i></i><b>LookBook</b></div>',
+    lookbook: '<div class="aura-card-visual visual-lookbook" aria-hidden="true"><img src="assets/lookbook-category-card.png" alt=""><span></span><b>LookBook</b></div>',
     quick: '<div class="aura-card-visual visual-quick" aria-hidden="true"><i>✦</i><i>↗</i><i>+</i><b>Daily details</b></div>',
     qa: '<div class="aura-card-visual visual-qa" aria-hidden="true"><i>?</i><i>!</i><i>✓</i><b>Clear answers</b></div>',
     guide: '<div class="aura-card-visual visual-guide" aria-hidden="true"><i>01</i><i>02</i><i>03</i><b>Chapter by chapter</b></div>'
