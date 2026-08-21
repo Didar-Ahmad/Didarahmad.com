@@ -25,7 +25,79 @@ const chapters = [
   {id:'medical',name:'Surgical & medical interventions',tag:'24',desc:'Medical decisions need qualified assessment, informed consent and realistic expectations.',lessons:[['When to consider care','Consider professional care for functional concerns, persistent skin disease, bite issues, hair loss or distress that affects your life.','Start with a licensed doctor, dentist or dermatologist.','Do not decide from a before-and-after photo alone.'],['Choosing a qualified professional','Check licensing, relevant experience, risks, recovery and follow-up care.','Get a second opinion for elective procedures.','Avoid providers who pressure you or promise perfection.'],['Procedure overview and limits','Treatments can address specific concerns but have cost, recovery, side effects and limits.','Ask what happens if the result is not as expected.','Never perform procedures, fillers or injections at home.']]},
   {id:'mindset',name:'The mental side & final summary',tag:'25',desc:'Use self-improvement to participate more in life, not to become trapped by appearance.',lessons:[['Step away from blackpill thinking','Fatalistic appearance beliefs can harm mood and stop useful action.','Focus on learnable skills, health and kind self-talk.','Seek mental-health support if appearance thoughts feel constant or distressing.'],['Build a simple stack','A useful routine is short: sleep, food, movement, grooming and prepared clothes.','Add one habit only after the previous one feels automatic.','Do not turn every hour into an optimization project.'],['Highest-leverage changes','The six basics are sleep, sun protection, dental hygiene, movement, simple nutrition and clothing fit.','Make a one-page checklist for your own week.','Do not chase perfection; consistency beats intensity.']]}
 ];
-const quickTips=[['01','Use daylight','Judge skin, hair and outfits in indirect daylight before making a decision.'],['02','Fit before brand','A simple garment that fits well beats an expensive one that pulls or hangs.'],['03','Keep tools clean','Clean clippers, razors, brushes and pillowcases help prevent irritation and buildup.'],['04','One change at a time','A simple routine makes it clear what is helping and what is irritating.'],['05','Step back from the camera','A farther camera distance gives a fairer view of facial proportions.'],['06','Relax the jaw','Clenching can create tension and does not safely build a jawline.'],['07','Save working outfits','Photograph outfits that feel good so dressing becomes easier.'],['08','Prioritize sleep','A consistent sleep schedule helps energy, mood and a rested appearance.'],['09','Use sun protection','Comfortable broad-spectrum sunscreen is a long-term grooming essential.'],['10','Move often','Posture improves through movement, not holding one rigid position all day.'],['11','Clean shoes matter','A clean, well-kept pair is more noticeable than an extra trend piece.'],['12','Use a gentle cleanse','Over-washing and scrubbing can irritate skin and worsen the problem.']];
+const quickTips=[
+  ['01','Face & grooming · Keep brows natural','Clean up obvious stray eyebrow hairs, but avoid over-shaping them.'],
+  ['02','Face & grooming · Choose facial hair intentionally','Choose a clean shave, stubble or beard that suits your face and upkeep routine.'],
+  ['03','Face & grooming · Keep beard edges tidy','Keep cheek and neckline edges intentional instead of letting them grow out unevenly.'],
+  ['04','Face & grooming · Refresh after sweating','Wash your face after heavy sweating, then use moisturizer if your skin feels dry.'],
+  ['05','Face & grooming · Protect exposed skin','Use broad-spectrum SPF 30+ when you will be exposed to daylight.'],
+  ['06','Face & grooming · Add products slowly','Do not introduce several new skincare products at once; it makes irritation harder to identify.'],
+  ['07','Face & grooming · Finish the small details','Keep nose, ear and neckline hair groomed, and keep teeth and breath fresh.'],
+  ['08','Face & grooming · Cut hair before it looks overgrown','Book a haircut before the shape disappears rather than waiting for a full reset.'],
+  ['09','Face & grooming · Prioritize sleep','Good sleep can help you look more rested and makes every grooming habit easier to maintain.'],
+
+  ['10','Hair · Match cut to face and texture','Choose your haircut for your face shape and hair texture, not trends alone.'],
+  ['11','Hair · Add controlled root volume','Flat hair often benefits from lift at the roots rather than more heavy product.'],
+  ['12','Hair · Use less product','Fine hair usually looks cleaner with lighter amounts of product and a natural finish.'],
+  ['13','Hair · Pick the finish on purpose','Use matte products for a more natural finish; avoid overloading wax or gel.'],
+  ['14','Hair · Blow-dry with direction','Blow-dry in the direction you want your hair to sit before adding styling product.'],
+  ['15','Hair · Test a few reliable shapes','Try a side sweep, textured fringe, middle part or pushed-back style and keep the one you can maintain.'],
+  ['16','Hair · Keep the outline tidy','Tidy sides and neckline between major haircuts to keep the overall cut intentional.'],
+  ['17','Hair · Bring references to your barber','Reference photos communicate texture and length better than relying only on haircut names.'],
+
+  ['18','Style · Fit before brand','A well-fitting garment is more useful than an expensive item that pulls, sags or stacks awkwardly.'],
+  ['19','Style · Check the shoulders first','When buying shirts and jackets, check the shoulder fit before judging the rest of the garment.'],
+  ['20','Style · Fix trouser length','Hem trousers when excess fabric stacks awkwardly over your shoes.'],
+  ['21','Style · Use proportion deliberately','Try mid-rise or high-rise trousers, and balance oversized tops with intentional proportions elsewhere.'],
+  ['22','Style · Build around two or three colours','A limited palette makes outfits easier to repeat and more cohesive.'],
+  ['23','Style · Use neutrals as the base','Neutral trousers make statement tops easier to style; monochrome can create a longer visual line.'],
+  ['24','Style · Match classic details','When you want a polished look, loosely match your belt and shoes.'],
+  ['25','Style · Maintain the outfit','Steam or iron clothing, keep white sneakers clean and remove lint before leaving.'],
+  ['26','Style · Keep branding quiet','Avoid giant logos when you want an understated, premium-looking outfit.'],
+  ['27','Style · One accessory is enough','One clear accessory usually works better than several competing ones.'],
+  ['28','Style · Tailoring changes everything','A small alteration can make inexpensive clothes look dramatically more intentional.'],
+
+  ['29','Body & posture · Stand tall without stiffness','Keep shoulders down and relaxed rather than forcing your chest forward.'],
+  ['30','Body & posture · Stack head over shoulders','Keep your head naturally over your shoulders and avoid looking down at your phone for long periods.'],
+  ['31','Body & posture · Train balance','Back, shoulders, legs and core all support balanced posture and how clothes sit.'],
+  ['32','Body & posture · Walk naturally','Use controlled natural strides and let your arms swing instead of keeping them stiff.'],
+  ['33','Body & posture · Do not lock your knees','When standing, distribute weight naturally and avoid a rigid pose.'],
+  ['34','Body & posture · Move regularly','Regular movement and exercise can improve how confidently you carry yourself and your clothes.'],
+
+  ['35','Photos · Turn slightly from camera','Turn your torso slightly away from the lens to add dimension to a standing photo.'],
+  ['36','Photos · Use a relaxed jaw','Move your chin slightly forward, drop your shoulders and avoid aggressive jaw clenching.'],
+  ['37','Photos · Give your hands a task','Try a pocket, watch, jacket, sunglasses or cuff-adjusting position instead of letting both hands hang.'],
+  ['38','Photos · Rotate your gaze','Mix camera, left, right, down and looking-away angles instead of using one expression every time.'],
+  ['39','Photos · Use a three-quarter angle','A three-quarter face angle often adds more dimension than only front-facing photos.'],
+  ['40','Photos · Capture movement','Walking shots and photos taken during movement tend to look more natural.'],
+  ['41','Photos · Use a fair lens distance','Avoid ultra-close wide-angle selfies when judging facial proportions.'],
+  ['42','Photos · Start with window light','Window light is an accessible way to create flattering portraits.'],
+  ['43','Photos · Choose expression over posing','A natural expression usually reads better than a forced model expression.'],
+
+  ['44','Skin & details · Keep routines simple','Consistency matters more than owning many skincare products.'],
+  ['45','Skin & details · Clean high-contact items','Clean your phone screen and change pillowcases regularly if they often touch your face.'],
+  ['46','Skin & details · Do not pick spots','Picking can increase irritation and marks; use gentle care and seek professional help for persistent concerns.'],
+  ['47','Skin & details · Keep hands presentable','Keep nails short, clean and evenly trimmed, and moisturize dry hands before going out.'],
+  ['48','Skin & details · Check fabric details','Keep collars and cuffs clean, remove loose threads and check for deodorant marks.'],
+  ['49','Skin & details · Clean your lenses','Clean glasses and sunglasses lenses so your face and outfit look sharper.'],
+
+  ['50','Aura & presence · Move with purpose','Avoid rushing unnecessarily; calm movement usually looks more confident.'],
+  ['51','Aura & presence · Keep eye contact comfortable','Use relaxed eye contact rather than an aggressive stare.'],
+  ['52','Aura & presence · Stop self-checking','Avoid repeatedly adjusting your hair or clothes in public once you are ready.'],
+  ['53','Aura & presence · Be present','Keep your phone away during conversations and listen without interrupting.'],
+  ['54','Aura & presence · Speak at a useful pace','Speak clearly instead of rushing your words.'],
+  ['55','Aura & presence · Use fragrance lightly','Fragrance should be noticed only at close range, not across a room.'],
+  ['56','Aura & presence · Lead with composure','Head up, relaxed body language and clean clothes create more presence than forced dominance.'],
+
+  ['57','AuraMax rule · Fit over brand','Choose fit before labels, logos or price.'],
+  ['58','AuraMax rule · Proportion over trend','Use trends only when they work with your own proportions and routine.'],
+  ['59','AuraMax rule · Skincare over filters','A consistent, gentle routine will serve you better than chasing a perfect photo.'],
+  ['60','AuraMax rule · Consistency over quick fixes','Small habits repeated well beat dramatic changes that do not last.'],
+  ['61','AuraMax rule · Clean shoes, clean look','Well-kept footwear makes a larger difference than another trend item.'],
+  ['62','AuraMax rule · Master your own hair','Find a style and routine that works for your texture instead of fighting it daily.'],
+  ['63','AuraMax rule · Simplicity can look expensive','When the fit, grooming and condition are right, you do not need to overdo the outfit.'],
+  ['64','AuraMax rule · Confidence plus composure','Build confidence through prepared habits, comfort and real-world participation.']
+];
 const styleCards=[['The clean-base wardrobe',['Well-fitting tees or shirts','Straight trousers or jeans','A versatile outer layer','Clean everyday footwear']],['Colour formula',['Start with navy, charcoal, cream, olive or brown','Add one accent','Repeat a colour once','Check it in daylight']],['Fit checkpoints',['Shoulder seam','Waist comfort','Sleeve and trouser length','Comfort while walking and sitting']],['Smart-casual formula',['Fitted knit or polo','Clean trousers','Minimal leather sneaker or loafer','One structured layer']],['Accessories',['One watch or simple ring','Match metals loosely','Use a belt that suits footwear','Avoid adding everything at once']],['Care makes style',['Steam or press garments','Remove lint','Repair small damage','Store shoes and knits properly']]];
 const topicSeeds=chapters.flatMap(c=>c.lessons.map(l=>[c.name,l[0],l[1],l[2],l[3]]));
 const questionStarts=['How do I start with','What should I know about','What is the safest way to improve','How often should I work on','What mistakes should I avoid with','What results are realistic for','Can I improve','How can I check','When should I get help with','What is one useful tip for'];
