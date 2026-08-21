@@ -79,8 +79,15 @@ function show(view) {
     if (back) {
       back.removeAttribute('data-view');
       back.dataset.auraView = 'hub';
+      back.type = 'button';
       back.innerHTML = '<span aria-hidden="true">←</span> Back to all categories';
-      back.onclick = null;
+      // Legacy views install their own handler, so give this control a direct
+      // route back to the redesigned hub as well as the delegated route.
+      back.onclick = event => {
+        event.preventDefault();
+        event.stopPropagation();
+        show('hub');
+      };
     }
     appendCategoryGallery(view === 'quick' ? 'Quick Looksmax Tips' : 'Looksmax Q&A Advanced');
     appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
