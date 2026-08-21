@@ -296,7 +296,13 @@ function installNavigation() {
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closeLearnViewer(); });
   document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show('hub');
 }
-window.addEventListener('load', () => {
+// Modules can finish loading after the browser's `load` event when a page is
+// restored from cache.  Boot immediately when the document is already ready
+// so the redesigned category and guide handlers are never skipped.
+let auraMaxRedesignBooted = false;
+function bootAuraMaxRedesign() {
+  if (auraMaxRedesignBooted || !appRoot) return;
+  auraMaxRedesignBooted = true;
   installNavigation();
   connectGallery();
 
@@ -314,7 +320,13 @@ window.addEventListener('load', () => {
       wasOpen = isOpen;
     }).observe(onboarding, { attributes: true, attributeFilter: ['class'] });
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootAuraMaxRedesign, { once: true });
+} else {
+  bootAuraMaxRedesign();
+}
 
 async function openGalleryAdmin() {
   if (!galleryClient) { alert('To use shared gallery uploads, add the Supabase publishable key and run supabase/auramax_gallery.sql first.'); return; }
