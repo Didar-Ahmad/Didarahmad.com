@@ -48,3 +48,6 @@
 
 /* The LookBook card uses the supplied AuraMax fashion image rather than an abstract preview. */
 .visual-lookbook{display:block;padding:0;background:#101720}.visual-lookbook img{display:block;width:100%;height:100%;object-fit:cover;object-position:39% 33%;filter:saturate(.92) contrast(1.05)}.visual-lookbook span{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,12,20,.2),rgba(7,12,20,.04) 54%,rgba(7,12,20,.54))}
+
+/* Premium playbook overview: communicate depth before a visitor enters a chapter. */
+.guide-value-summary{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.guide-value-summary span{display:inline-flex;align-items:baseline;gap:7px;padding:10px 13px;border:1px solid rgba(230,188,120,.42);border-radius:999px;background:rgba(230,188,120,.08);color:#e8d8b9;font-size:13px;font-weight:750}.guide-value-summary b{color:var(--gold);font-size:17px;font-weight:950}@media(max-width:520px){.guide-value-summary{display:grid;grid-template-columns:1fr}.guide-value-summary span{justify-content:space-between}}

@@ -227,6 +227,83 @@ addLessons('mental',[
   ['Realistic expectations','Presentation changes can be meaningful without transforming anatomy.','Set one observable, kind goal at a time.','Avoid promises of a total transformation.'],
   ['Spotting fake transformations','Before-and-after photos can change through light, lens, pose, weight and editing.','Check whether conditions match.','Do not treat viral images as proof.']
 ]);
+// Keep the complete guide focused and premium: a single clear playbook rather
+// than the older, overlapping chapter library above.
+const premiumPlaybookChapters = [
+  { id: 'playbook-start', name: 'The AuraMax System', tag: '01', desc: 'Start with the five layers that make your presentation feel coherent: clean, frame, fit, detail and presence.', lessons: [
+    ['How to use the playbook', 'This guide is built to be used in small repeatable steps, not completed in one exhausting day.', 'Choose one chapter that solves your biggest current friction.', 'Test its steps for a week before adding another change.'],
+    ['The five-layer AuraMax system', 'A polished everyday look is built through Clean, Frame, Fit, Detail and Presence.', 'Use Clean for hygiene and maintenance; use Frame for hair, skin and facial-hair choices.', 'Use Fit, Detail and Presence to finish the impression without overcomplicating it.'],
+    ['Your first personal audit', 'A short audit prevents random shopping and trend chasing.', 'List what already works: haircut, grooming routine, two outfits and one reliable shoe.', 'Choose the single weakest link that will make the largest daily difference.'],
+    ['The premium rule: consistency first', 'Small habits repeated well create a stronger result than dramatic changes you cannot maintain.', 'Build routines around your real schedule, budget and comfort.', 'Avoid pain, extreme dieting, compulsive checking and quick-fix promises.']
+  ] },
+  { id: 'playbook-face', name: 'Face & Grooming', tag: '02', desc: 'Frame your face with clean, conservative grooming that looks intentional in real life.', lessons: [
+    ['The eyebrow protocol', 'Brows should look tidy and natural, not drawn into a new shape.', 'Remove only clear stray hairs in good light and comb brows into their natural direction.', 'Stop before the brows look noticeably thinner or overly sharp.'],
+    ['Facial-hair decision map', 'Facial hair should support your growth pattern and the time you can spend maintaining it.', 'Choose clean-shaven, light stubble or a short beard based on density and comfort.', 'Keep neck and cheek lines conservative, then refine gradually.'],
+    ['The detail check', 'The smallest grooming details often change the overall impression most.', 'Check lips, nails, nose hair, collar, glasses and facial-hair edges before leaving.', 'Use clean tools and replace dull blades rather than forcing a close shave.'],
+    ['A polished face without overdoing it', 'A rested expression, clean skin and a good haircut look more premium than chasing a perfectly sculpted face.', 'Relax your jaw and shoulders before photos or social situations.', 'Use comfortable grooming, sleep and gentle care instead of extreme methods.']
+  ] },
+  { id: 'playbook-skin', name: 'Skin System', tag: '03', desc: 'Build a simple morning-and-evening routine that protects your skin barrier and is easy to maintain.', lessons: [
+    ['AM base routine', 'Morning care should prepare and protect, not become a long product stack.', 'Cleanse only if needed, moisturize if skin feels dry, then apply broad-spectrum SPF 30+ on exposed skin.', 'Keep products gentle enough to use consistently.'],
+    ['PM base routine', 'Evening care is where you clean away the day and support your skin barrier.', 'Use a gentle cleanser and a suitable moisturizer.', 'If using a treatment, introduce only one active at a time and follow its label.'],
+    ['Product logic', 'Good skin care is about matching a simple product to a real concern, not owning everything.', 'Choose cleanser, moisturizer and sunscreen before buying treatments.', 'For persistent acne, pain, scarring or severe irritation, see a qualified dermatologist.'],
+    ['Under-eye and environment reset', 'Sleep, allergies, rubbing and sun exposure can affect the eye area more than expensive products.', 'Prioritize a steady sleep schedule and use a clean cool compress for temporary puffiness.', 'Keep pillowcases, phone screens and makeup or grooming tools clean.']
+  ] },
+  { id: 'playbook-hair', name: 'Hair Architecture', tag: '04', desc: 'Choose a haircut and styling routine based on your real texture, density and maintenance time.', lessons: [
+    ['Read your hair before choosing a cut', 'Texture, density and growth direction determine how a haircut behaves after the salon visit.', 'Observe your clean air-dried hair in normal light.', 'Save references from people with similar hair, not only a similar face shape.'],
+    ['The volume formula', 'Most polished styles need shape and movement, not excessive product.', 'Start with a small amount of lightweight product and dry in the direction you want the hair to sit.', 'Add product gradually; too much makes hair look heavy and flat.'],
+    ['The barber brief', 'A clear brief helps the barber create a cut you can repeat at home.', 'Bring two or three realistic references and explain how much styling time you actually have.', 'Ask how the cut will grow out and how to style it without a professional finish.'],
+    ['Maintenance between cuts', 'A good cut stays better when scalp care, washing frequency and trimming are consistent.', 'Wash based on oil, sweat and buildup; condition according to your hair needs.', 'Seek professional advice for sudden shedding, persistent itch, redness or pain.']
+  ] },
+  { id: 'playbook-frame', name: 'Body & Frame', tag: '05', desc: 'Improve strength, posture and how clothes sit through balanced, gradual habits.', lessons: [
+    ['Visual priorities', 'A balanced frame is supported by legs, back, shoulders, chest and core—not by training one area only.', 'Choose full-body movements that you can control safely.', 'Focus on gradual progress rather than a rapid appearance change.'],
+    ['The three-day full-body routine', 'Three consistent sessions can build a useful base without taking over your week.', 'Use a squat or leg movement, push, pull, hinge and simple core exercise across the week.', 'Increase repetitions, load or control only when recovery and form are steady.'],
+    ['Progression without burnout', 'Training works when effort and recovery are both present.', 'Keep one or two easier days and support training with regular meals and sleep.', 'Do not train through joint pain, dizziness or persistent exhaustion.'],
+    ['Frame through clothing', 'Clothes should follow your natural proportions and allow normal movement.', 'Check shoulder seams, waist comfort, trouser line and sleeve length while sitting and walking.', 'Alter promising pieces rather than relying only on the size label.']
+  ] },
+  { id: 'playbook-posture', name: 'Posture & Movement', tag: '06', desc: 'Use comfortable alignment and calmer movement to look more composed without holding a rigid pose.', lessons: [
+    ['Neutral alignment', 'Good posture is a comfortable range, not a military stance.', 'Let your head sit over your ribs, relax your shoulders and breathe normally.', 'Move often instead of bracing yourself all day.'],
+    ['The desk reset', 'Your workspace can either support your body or create avoidable tension.', 'Raise your screen, support your feet and keep frequently used items close.', 'Stand, walk or change position regularly during long sessions.'],
+    ['Walking with ease', 'Calm, natural walking often communicates more confidence than exaggerated body language.', 'Keep a steady pace, let your arms move naturally and look ahead.', 'Avoid locking your knees or forcing a dramatic stride.'],
+    ['Presence in a room', 'Presence comes from preparation and attention, not dominance.', 'Arrive with clean clothes, relaxed shoulders and one simple intention for the interaction.', 'Keep your phone away when you are talking to someone.']
+  ] },
+  { id: 'playbook-style', name: 'Style & Fit', tag: '07', desc: 'Use fit, colour and fabric to create a practical wardrobe that looks deliberate every day.', lessons: [
+    ['Fit order', 'Fit is read before brand, trend or price.', 'Check shoulders first, then waist, seat, sleeve length and trouser break.', 'Keep only pieces you can sit, walk and move in comfortably.'],
+    ['The trouser upgrade', 'Trousers shape the entire silhouette and can elevate a simple top immediately.', 'Start with a clean straight or tapered line in navy, charcoal, cream, olive or dark denim.', 'Match the hem and shoe weight to the occasion.'],
+    ['A simple colour system', 'A good outfit usually starts with a neutral base and one controlled point of contrast.', 'Use navy, charcoal, cream, olive, brown or black as your base.', 'Repeat one colour once through a shoe, belt, layer or accessory.'],
+    ['The premium finish', 'Condition and restraint make an outfit look more expensive than extra logos.', 'Steam or press garments, remove lint and keep footwear clean.', 'Use one or two accessories rather than adding everything at once.']
+  ] },
+  { id: 'playbook-formulas', name: 'Wardrobe Formulas', tag: '08', desc: 'Use reliable outfit formulas when you want to get dressed quickly without losing your own style.', lessons: [
+    ['Clean casual', 'A simple fitted tee or knit, clean trousers or jeans and understated footwear works in many settings.', 'Start with a neutral top and well-fitting bottoms.', 'Add one light layer only when it improves the silhouette.'],
+    ['Elevated casual', 'A polo, structured overshirt or knit can make casual dressing feel more intentional.', 'Pair one refined top with straight trousers and clean leather footwear or minimal sneakers.', 'Keep fabrics and colours compatible in weight and formality.'],
+    ['Old-money inspired, not costume', 'The useful part of classic style is quality fit, restrained colour and good condition.', 'Use knitwear, polos, trousers, loafers and simple outerwear you would genuinely wear.', 'Avoid turning every outfit into a costume or logo display.'],
+    ['Street, layered and smart formulas', 'Different aesthetics work best when the proportions are deliberate and the outfit has one clear focal point.', 'Choose one statement piece, then keep the remaining layers quieter.', 'Use a mirror check from head to toe before leaving.']
+  ] },
+  { id: 'playbook-photos', name: 'Pose & Photo System', tag: '09', desc: 'Take natural photos that show your real features and outfit clearly instead of relying on distortion or filters.', lessons: [
+    ['The four-part pose', 'A strong photo combines a comfortable stance, relaxed face, useful hand position and clean camera angle.', 'Turn your torso slightly, relax your jaw and give one hand a simple task.', 'Keep your feet grounded rather than forcing an exaggerated pose.'],
+    ['Jaw and face in photos', 'Light and camera distance change facial definition far more than online posing tricks claim.', 'Step back from a wide lens and use soft directional light.', 'Keep your chin neutral or slightly forward without clenching.'],
+    ['Hands and angle rotation', 'Hands look best when they have a natural purpose and your angle varies across shots.', 'Try a pocket, watch, cuff, jacket or sunglasses instead of both hands hanging still.', 'Take camera, three-quarter and looking-away versions to find what feels natural.'],
+    ['Camera reality rule', 'A representative photo should still look like you on a good normal day.', 'Use normal distance, modest zoom and a clean background.', 'Avoid heavy filters or edits that make the image misleading.']
+  ] },
+  { id: 'playbook-presence', name: 'Presence & Aura', tag: '10', desc: 'Make grooming and style feel complete through calm communication, social polish and personal comfort.', lessons: [
+    ['Composure', 'Composure is built from being prepared and not rushing unnecessarily.', 'Give yourself a few minutes before leaving to check clothes, keys and posture.', 'Slow down before speaking rather than trying to appear dominant.'],
+    ['Voice and conversation', 'A clear, comfortable speaking pace makes your ideas easier to follow.', 'Pause briefly, speak at a useful volume and listen fully before responding.', 'Do not force a deeper voice or imitate someone else’s mannerisms.'],
+    ['Scent and close-range details', 'Fragrance works best as a subtle personal detail, not a room-filling announcement.', 'Use a small amount on clean skin or clothing if you enjoy it.', 'Keep clothes, breath and footwear clean before relying on fragrance.'],
+    ['Social polish', 'Reliable manners and attention are part of a polished presence.', 'Make comfortable eye contact, arrive on time and follow through on small promises.', 'Focus on participation and curiosity instead of self-monitoring your appearance.']
+  ] },
+  { id: 'playbook-reset', name: '30-Day AuraMax Reset', tag: '11', desc: 'Use a month-long sequence to install the habits in this guide without trying to change everything at once.', lessons: [
+    ['Week 1: Clean and audit', 'Start by simplifying the visible basics and finding friction in your routine.', 'Set a consistent sleep target, check grooming tools and prepare two reliable outfits.', 'Take one normal-light reference photo only if it helps you track style, not your worth.'],
+    ['Week 2: Frame and fit', 'Use week two to refine hair, skin basics and your best-fitting clothes.', 'Book or plan a realistic haircut and identify one clothing alteration or upgrade.', 'Keep the skin routine simple while you see what your skin tolerates.'],
+    ['Week 3: Detail and presence', 'Small maintenance choices become visible once the basics are stable.', 'Practice a 10-minute weekly grooming reset and one calm social habit.', 'Choose one photo or outfit formula that makes you feel comfortable and repeatable.'],
+    ['Week 4: Keep what works', 'The final week turns useful experiments into a long-term personal system.', 'Keep the three habits that made daily life easier.', 'Drop anything expensive, uncomfortable or impossible to maintain.']
+  ] },
+  { id: 'playbook-maintenance', name: 'Maintenance Calendar', tag: '12', desc: 'Protect the results of your work with a realistic daily, weekly and monthly maintenance rhythm.', lessons: [
+    ['Daily essentials', 'A short daily system keeps your presentation ready without taking much time.', 'Handle dental hygiene, basic skin care, clean clothes and a quick grooming check.', 'Prepare tomorrow’s outfit before your evening gets busy.'],
+    ['Weekly reset', 'A weekly reset prevents the small details from becoming last-minute problems.', 'Trim nails or facial hair, clean shoes, change bedding and check laundry or ironing.', 'Review what ran out before you need it.'],
+    ['Every few weeks', 'Some upgrades only need occasional attention but make a large visual difference.', 'Schedule hair maintenance, replace dull grooming tools and assess fit of often-worn items.', 'Repair small clothing damage before it becomes a reason not to wear the piece.'],
+    ['The 60-second exit check', 'A final check helps you leave feeling prepared without obsessing over perfection.', 'Check hair, teeth, collar, shoes and one small personal detail in normal light.', 'Then leave—do not restart the routine because of tiny imagined flaws.']
+  ] }
+];
+chapters.splice(0, chapters.length, ...premiumPlaybookChapters);
 window.AuraMax={chapters,show,chapter,lesson};
 const root=document.querySelector('#view-root');
 const profileKey='auramax-web-profile';let profile=JSON.parse(localStorage.getItem(profileKey)||'null');
