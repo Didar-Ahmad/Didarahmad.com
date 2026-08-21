@@ -15,6 +15,8 @@ let galleryItems = [];
 let galleryClient = null;
 let activeLookbookCategory = 'All';
 let activeLookbookArticleId = null;
+let activeGuideChapterId = null;
+let activeGuideLessonIndex = null;
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const currentProfile = () => JSON.parse(localStorage.getItem(profileStore) || 'null');
 const activeGallery = () => galleryItems.length ? galleryItems : JSON.parse(localStorage.getItem(galleryStore) || 'null') || galleryFallback;
@@ -93,8 +95,41 @@ function renderLookbookArticle(itemId, returnCategory = activeLookbookCategory) 
   appRoot.innerHTML = `<section class="lookbook-article-shell"><button type="button" class="lookbook-article-back" data-lookbook-return data-return-category="${escapeHtml(returnCategory)}"><span aria-hidden="true">←</span> Back to ${escapeHtml(returnLabel)}</button><article class="lookbook-article"><header class="lookbook-article-header"><p class="eyebrow">STYLE GUIDE · ${escapeHtml(item.category)}</p><h1>${escapeHtml(item.title)}</h1><p class="lookbook-article-lead">A visual outfit reference to adapt to your own wardrobe, occasion and comfort.</p></header><figure class="lookbook-article-media">${imageMarkup(item)}<figcaption>${escapeHtml(item.title)} · AuraMax LookBook</figcaption></figure><section class="lookbook-article-content"><div><p class="eyebrow">ABOUT THIS LOOK</p><h2>The details that make it work</h2></div><p>${escapeHtml(item.description)}</p><div class="lookbook-article-note"><strong>Make it your own.</strong><span>Use this as a practical reference. Prioritise fit, comfort and the pieces you already wear well over copying every item exactly.</span></div></section></article></section>`;
   appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-function renderGuide() { const chapters = window.AuraMax.chapters || []; appRoot.innerHTML = `${backButton()}<section class="auramax-page-head"><p class="eyebrow">LOOKSMAX COMPLETE GUIDE</p><h2>Build the fundamentals before chasing details.</h2><p>Choose a chapter and work through a few lessons at a time.</p></section>${learnGalleryMarkup('Looksmax Complete Guide')}<div class="chapter-grid">${chapters.map(chapter => `<button class="chapter-card" data-aura-chapter="${escapeHtml(chapter.id)}"><small>CHAPTER ${escapeHtml(chapter.tag)}</small><h3>${escapeHtml(chapter.name)}</h3><p>${escapeHtml(chapter.desc)}</p></button>`).join('')}</div>`; }
-function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); }
+function getGuideChapter(id) { return (window.AuraMax.chapters || []).find(chapter => String(chapter.id) === String(id)); }
+function renderGuide() {
+  const chapters = window.AuraMax.chapters || [];
+  activeGuideChapterId = null;
+  activeGuideLessonIndex = null;
+  appRoot.dataset.auraView = 'guide';
+  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head"><p class="eyebrow">LOOKSMAX COMPLETE GUIDE</p><h2>Build the fundamentals before chasing details.</h2><p>Choose a chapter to open its complete set of practical lessons. Each lesson gives you clear steps you can use straight away.</p></section>${learnGalleryMarkup('Looksmax Complete Guide')}<section class="guide-chapter-directory" aria-label="Looksmax Complete Guide chapters"><div class="guide-directory-head"><div><p class="eyebrow">COMPLETE GUIDE</p><h3>Choose your next chapter</h3></div><span>${chapters.length} chapters</span></div><div class="chapter-grid">${chapters.map(chapter => `<button type="button" class="chapter-card" data-aura-guide-chapter="${escapeHtml(chapter.id)}"><small>CHAPTER ${escapeHtml(chapter.tag)}</small><h3>${escapeHtml(chapter.name)}</h3><p>${escapeHtml(chapter.desc)}</p><span class="guide-card-action">Open chapter <b aria-hidden="true">→</b></span></button>`).join('')}</div></section>`;
+}
+function renderGuideChapter(id) {
+  const chapter = getGuideChapter(id);
+  if (!chapter) { renderGuide(); return; }
+  const lessons = Array.isArray(chapter.lessons) ? chapter.lessons : [];
+  activeGuideChapterId = String(chapter.id);
+  activeGuideLessonIndex = null;
+  appRoot.dataset.auraView = 'guide-chapter';
+  document.body.classList.add('aura-inner-view');
+  appRoot.innerHTML = `<section class="guide-detail-shell"><button type="button" class="guide-back-button" data-aura-guide-back="chapters"><span aria-hidden="true">←</span> Back to complete guide</button><header class="guide-detail-head"><p class="eyebrow">CHAPTER ${escapeHtml(chapter.tag)}</p><h1>${escapeHtml(chapter.name)}</h1><p>${escapeHtml(chapter.desc)}</p><span>${lessons.length} practical lesson${lessons.length === 1 ? '' : 's'}</span></header><section class="guide-lesson-grid" aria-label="Lessons in ${escapeHtml(chapter.name)}">${lessons.length ? lessons.map((lesson, index) => `<button type="button" class="guide-lesson-card" data-aura-guide-lesson="${index}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"><small>LESSON ${String(index + 1).padStart(2, '0')}</small><h2>${escapeHtml(lesson[0] || `Lesson ${index + 1}`)}</h2><p>${escapeHtml(lesson[1] || 'Open this lesson for practical steps.')}</p><span>Read lesson <b aria-hidden="true">→</b></span></button>`).join('') : '<p class="guide-empty">Lessons for this chapter are being prepared.</p>'}</section></section>`;
+  appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function renderGuideLesson(chapterId, index) {
+  const chapter = getGuideChapter(chapterId);
+  const lessonIndex = Number(index);
+  const lesson = chapter?.lessons?.[lessonIndex];
+  if (!chapter || !lesson) { renderGuideChapter(chapterId); return; }
+  const [title = `Lesson ${lessonIndex + 1}`, summary = '', firstStep = '', secondStep = ''] = lesson;
+  const previous = lessonIndex > 0 ? lessonIndex - 1 : null;
+  const next = lessonIndex < chapter.lessons.length - 1 ? lessonIndex + 1 : null;
+  activeGuideChapterId = String(chapter.id);
+  activeGuideLessonIndex = lessonIndex;
+  appRoot.dataset.auraView = 'guide-lesson';
+  document.body.classList.add('aura-inner-view');
+  appRoot.innerHTML = `<article class="guide-reader"><button type="button" class="guide-back-button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"><span aria-hidden="true">←</span> Back to ${escapeHtml(chapter.name)}</button><header><p class="eyebrow">CHAPTER ${escapeHtml(chapter.tag)} · LESSON ${String(lessonIndex + 1).padStart(2, '0')}</p><h1>${escapeHtml(title)}</h1><p class="guide-reader-lead">${escapeHtml(summary)}</p></header><section class="guide-reader-steps"><p class="eyebrow">PRACTICAL STEPS</p><h2>Put the lesson into practice</h2><ol><li>${escapeHtml(firstStep || 'Start with the smallest comfortable action you can repeat.')}</li><li>${escapeHtml(secondStep || 'Keep the routine simple enough to follow consistently.')}</li><li>Review what feels useful after a week, then adjust one detail at a time.</li></ol></section><aside class="guide-reader-note"><strong>Keep it personal.</strong><span>Use this guide as practical education, not a scorecard. Comfort, health and consistency matter more than chasing a perfect result.</span></aside><nav class="guide-reader-navigation" aria-label="Lesson navigation"><button type="button" ${previous === null ? 'disabled' : `data-aura-guide-navigate="${previous}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>← Previous lesson</button><button type="button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}">All lessons</button><button type="button" ${next === null ? 'disabled' : `data-aura-guide-navigate="${next}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>Next lesson →</button></nav></article>`;
+  appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); if(view==='guide-chapter')renderGuideChapter(activeGuideChapterId); if(view==='guide-lesson')renderGuideLesson(activeGuideChapterId, activeGuideLessonIndex); }
 function show(view) {
   appRoot.dataset.auraView = view;
   document.body.classList.toggle('aura-inner-view', view !== 'hub');
@@ -139,6 +174,14 @@ function installNavigation() {
     if (lookbookItem) { event.preventDefault(); event.stopImmediatePropagation(); renderLookbookArticle(lookbookItem.dataset.lookbookItem, lookbookItem.dataset.returnCategory || 'All'); return; }
     const lookbookReturn = event.target.closest('[data-lookbook-return]');
     if (lookbookReturn) { event.preventDefault(); event.stopImmediatePropagation(); renderLookbook(lookbookReturn.dataset.returnCategory || 'All'); return; }
+    const guideChapterControl = event.target.closest('[data-aura-guide-chapter]');
+    if (guideChapterControl) { event.preventDefault(); event.stopImmediatePropagation(); renderGuideChapter(guideChapterControl.dataset.auraGuideChapter); return; }
+    const guideLessonControl = event.target.closest('[data-aura-guide-lesson]');
+    if (guideLessonControl) { event.preventDefault(); event.stopImmediatePropagation(); renderGuideLesson(guideLessonControl.dataset.auraGuideChapterId, guideLessonControl.dataset.auraGuideLesson); return; }
+    const guideBackControl = event.target.closest('[data-aura-guide-back]');
+    if (guideBackControl) { event.preventDefault(); event.stopImmediatePropagation(); if (guideBackControl.dataset.auraGuideBack === 'chapters') renderGuide(); else renderGuideChapter(guideBackControl.dataset.auraGuideChapterId); return; }
+    const guideNavigateControl = event.target.closest('[data-aura-guide-navigate]');
+    if (guideNavigateControl) { event.preventDefault(); event.stopImmediatePropagation(); renderGuideLesson(guideNavigateControl.dataset.auraGuideChapterId, guideNavigateControl.dataset.auraGuideNavigate); return; }
     const learnControl = event.target.closest('[data-learn-item]');
     if (learnControl) { event.preventDefault(); event.stopImmediatePropagation(); openLearnViewer(learnControl.dataset.learnItem); return; }
     if (event.target.closest('[data-close-learn]')) { event.preventDefault(); event.stopImmediatePropagation(); closeLearnViewer(); return; }
