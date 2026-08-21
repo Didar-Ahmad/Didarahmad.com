@@ -131,13 +131,19 @@ function renderHub() {
   appRoot.innerHTML = `<section class="auramax-intro"><p class="eyebrow">YOUR PERSONALISED LOOKBOOK</p><h2>Build your style, one practical choice at a time.</h2><p>${currentProfile() ? 'Your face and body selections are saved. Choose a category to start.' : 'Start with a category, then personalise your guide whenever you want.'}</p></section><section class="auramax-category-grid" aria-label="AuraMax categories"><button class="aura-category tone-gold" data-aura-view="colours">${visuals.colours}<span>01</span><h3>Color Combination</h3><p>Learn simple outfit colour formulas and see what pieces work together.</p><b>Explore colour ideas →</b></button><button class="aura-category tone-blue" data-aura-view="lookbook">${visuals.lookbook}<span>02</span><h3>Styling Guide · LookBook</h3><p>Browse real outfit inspiration with the details that make each look work.</p><b>Open the gallery →</b></button><button class="aura-category tone-green" data-aura-view="quick">${visuals.quick}<span>03</span><h3>Quick Looksmax Tips</h3><p>Fast, useful techniques for grooming, hair, skin, posture and presence.</p><b>Get quick tips →</b></button><button class="aura-category tone-red" data-aura-view="qa">${visuals.qa}<span>04</span><h3>Looksmax Q&amp;A Advanced</h3><p>Search clear answers, techniques and common mistakes without the noise.</p><b>Ask a question →</b></button><button class="aura-category tone-purple" data-aura-view="guide">${visuals.guide}<span>05</span><h3>Looksmax Complete Guide</h3><p>Go deeper with practical chapters on grooming, health, style and confidence.</p><b>Read the full guide →</b></button></section>`;
 }
 function renderColours() {
+  const paletteLibrary = [
+    { title: 'Clean navy contrast', copy: 'Navy, crisp white and tan create an easy smart-casual base.', colours: ['#142744', '#f7f4ed', '#b8814f'] },
+    { title: 'Earth-tone balance', copy: 'Olive, ecru and brown keep a relaxed outfit intentional.', colours: ['#66744e', '#ede4d2', '#74452f'] },
+    { title: 'Cool modern neutral', copy: 'Stone, charcoal and soft blue give a sharper everyday option.', colours: ['#b3aea4', '#33363d', '#8ea8c8'] },
+    { title: 'Warm evening accent', copy: 'Cream, burgundy and dark denim add depth without overdoing colour.', colours: ['#f4ead6', '#78313b', '#172b48'] }
+  ];
   const skinGuides = [
     { key:'fair', label:'Fair / light skin', note:'Create gentle contrast instead of letting pale colours wash you out.', best:['Navy','Charcoal','Forest green','Burgundy','Cobalt','Camel'], careful:'Very pale beige, icy grey or white close to your skin may look flat. Add a darker jacket, collar or accessory.', formulas:['Navy overshirt + white tee + stone trousers','Forest knit + charcoal trousers + white sneakers','Burgundy shirt + dark denim + brown leather'], swatch:['#152b4f','#343940','#315b46','#7b2638','#235bb5'] },
     { key:'medium', label:'Medium / wheatish skin', note:'Balanced contrast works well; rich colours and warm neutrals are dependable.', best:['Teal','Olive','Cream','Rust','Navy','Chocolate'], careful:'Khaki, mustard-beige or muted brown very close to your skin can blend in. Separate them with navy, cream or white.', formulas:['Teal polo + cream trousers + dark brown shoes','Olive jacket + white tee + dark denim','Rust overshirt + navy trousers + tan sneakers'], swatch:['#0e7775','#647042','#f1e8d5','#aa4d2b','#132d55'] },
     { key:'olive', label:'Olive skin', note:'Earthy and jewel tones complement the natural green-gold depth of olive skin.', best:['Emerald','Plum','Off-white','Terracotta','Deep blue','Warm grey'], careful:'Yellow-greens and dull khakis may echo your undertone too closely. Place a crisp neutral near your face.', formulas:['Emerald shirt + warm-grey trousers + black loafers','Off-white knit + deep-blue denim + brown boots','Terracotta tee + charcoal overshirt + ecru trousers'], swatch:['#087a55','#6c356f','#f4efe3','#b45336','#153a67'] },
     { key:'deep', label:'Deep / dark skin', note:'Clear contrast and saturated colour can look especially strong and intentional.', best:['Crisp white','Royal blue','Mustard','Emerald','Wine','Camel'], careful:'Head-to-toe dark brown or low-contrast charcoal may lose definition. Add cream, white, camel or a clear accent.', formulas:['Crisp white shirt + camel trousers + dark loafers','Royal-blue knit + grey trousers + white sneakers','Mustard overshirt + black tee + dark denim'], swatch:['#f7f5ee','#2454b5','#d69f19','#087a55','#78273d'] }
   ];
-  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head colour-guide-head"><p class="eyebrow">COLOR COMBINATION · SKIN-TONE GUIDE</p><h2>Choose colours that bring your face forward.</h2><p>Start with your approximate skin depth, then choose a category to see recommended colours, caution colours and ready-to-wear outfit formulas.</p></section>${learnGalleryMarkup('Color Combination')}<nav class="skin-tone-nav" aria-label="Choose a skin-tone guide">${skinGuides.map((guide,index)=>`<button type="button" class="${index===0?'active':''}" data-skin-guide="${guide.key}">${guide.label}</button>`).join('')}</nav><div>${skinGuides.map((guide,index)=>`<article class="skin-guide-card ${index===0?'active':''}" data-skin-panel="${guide.key}"><header><div><p class="eyebrow">PERSONALISED STARTING POINT</p><h3>${guide.label}</h3><p>${guide.note}</p></div><div class="skin-palette">${guide.swatch.map((colour,i)=>`<span style="--swatch:${colour}" title="${guide.best[i]}"></span>`).join('')}</div></header><section><h4>Colours to try first</h4><div class="colour-chips">${guide.best.map(colour=>`<span>${colour}</span>`).join('')}</div></section><section class="colour-caution"><h4>Use thoughtfully</h4><p>${guide.careful}</p></section><section><h4>Ready-to-wear outfit formulas</h4><ol class="outfit-formulas">${guide.formulas.map(formula=>`<li>${formula}</li>`).join('')}</ol></section></article>`).join('')}</div>`;
+  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head colour-guide-head"><p class="eyebrow">COLOR COMBINATION · SKIN-TONE GUIDE</p><h2>Choose colours that bring your face forward.</h2><p>Start with an easy palette, then use your skin-tone guide for practical colour direction and ready-to-wear outfits.</p></section><section class="colour-palette-library" aria-label="Outfit colour palette ideas"><div class="colour-palette-library-head"><p class="eyebrow">START WITH A PALETTE</p><h3>Simple combinations that already work together.</h3></div><div class="colour-palette-grid">${paletteLibrary.map(palette => `<article><div class="colour-palette-swatch-row">${palette.colours.map(colour => `<i style="--palette-colour:${colour}"></i>`).join('')}</div><h4>${palette.title}</h4><p>${palette.copy}</p></article>`).join('')}</div></section>${learnGalleryMarkup('Color Combination')}<nav class="skin-tone-nav" aria-label="Choose a skin-tone guide">${skinGuides.map((guide,index)=>`<button type="button" class="${index===0?'active':''}" data-skin-guide="${guide.key}">${guide.label}</button>`).join('')}</nav><div>${skinGuides.map((guide,index)=>`<article class="skin-guide-card ${index===0?'active':''}" data-skin-panel="${guide.key}"><header><div><p class="eyebrow">PERSONALISED STARTING POINT</p><h3>${guide.label}</h3><p>${guide.note}</p></div><div class="skin-palette">${guide.swatch.map((colour,i)=>`<span style="--swatch:${colour}" title="${guide.best[i]}"></span>`).join('')}</div></header><section><h4>Colours to try first</h4><div class="colour-chips">${guide.best.map(colour=>`<span>${colour}</span>`).join('')}</div></section><section class="colour-caution"><h4>Use thoughtfully</h4><p>${guide.careful}</p></section><section><h4>Ready-to-wear outfit formulas</h4><ol class="outfit-formulas">${guide.formulas.map(formula=>`<li>${formula}</li>`).join('')}</ol></section></article>`).join('')}</div>`;
 }
 const lookbookCategories = ['Summer Fits', 'Formal', 'Denims', 'Tee', 'Luxury Casual', 'Old Money', 'Top Picks'];
 function renderLookbook(selectedCategory = 'All') {
@@ -249,7 +255,9 @@ function show(view) {
   appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function installNavigation() {
-  const legacyShow = window.AuraMax.show; window.AuraMax.legacyShow = legacyShow; window.AuraMax.show = show;
+  const legacyShow = window.AuraMax.show;
+  window.AuraMax.legacyShow = legacyShow;
+  window.AuraMax.show = show;
   document.addEventListener('click', event => {
     const skinControl = event.target.closest('[data-skin-guide]');
     if (skinControl) {
@@ -283,7 +291,7 @@ function installNavigation() {
     const learnControl = event.target.closest('[data-learn-item]');
     if (learnControl) { event.preventDefault(); event.stopImmediatePropagation(); openLearnViewer(learnControl.dataset.learnItem); return; }
     if (event.target.closest('[data-close-learn]')) { event.preventDefault(); event.stopImmediatePropagation(); closeLearnViewer(); return; }
-    const viewControl = event.target.closest('[data-aura-view]'); if(viewControl){event.preventDefault();event.stopImmediatePropagation();show(viewControl.dataset.auraView);return;} const legacyControl=event.target.closest('[data-view]'); if(legacyControl){event.preventDefault();event.stopImmediatePropagation();show(legacyControl.dataset.view==='style'?'lookbook':legacyControl.dataset.view);return;} const chapterControl=event.target.closest('[data-aura-chapter]');if(chapterControl){event.preventDefault();event.stopImmediatePropagation();window.AuraMax.chapter(chapterControl.dataset.auraChapter);return;}if(event.target.closest('#open-admin')){event.preventDefault();event.stopImmediatePropagation();openGalleryAdmin();}
+    const viewControl = event.target.closest('[data-aura-view]'); if(viewControl){event.preventDefault();event.stopImmediatePropagation();show(viewControl.dataset.auraView);return;} const legacyControl=event.target.closest('[data-view]'); if(legacyControl){event.preventDefault();event.stopImmediatePropagation();const legacyViewMap={style:'lookbook',lookbook:'guide',hub:'hub',quick:'quick',qa:'qa'};show(legacyViewMap[legacyControl.dataset.view]||legacyControl.dataset.view);return;} const chapterControl=event.target.closest('[data-aura-chapter]');if(chapterControl){event.preventDefault();event.stopImmediatePropagation();renderGuideChapter(chapterControl.dataset.auraChapter);return;}if(event.target.closest('#open-admin')){event.preventDefault();event.stopImmediatePropagation();openGalleryAdmin();}
   }, true);
   document.addEventListener('change', event => {
     const day = event.target.closest('[data-plan-day]');
@@ -294,14 +302,22 @@ function installNavigation() {
     if (note) { const progress = readPremiumProgress(); progress.personalNote = note.value; savePremiumProgress(progress); }
   });
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closeLearnViewer(); });
-  document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show('hub');
+  document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();const legacyViewMap={style:'lookbook',lookbook:'guide',hub:'hub',quick:'quick',qa:'qa'};show(legacyViewMap[button.dataset.view]||button.dataset.view);}, true));
+  new MutationObserver(() => {
+    if (appRoot.dataset.auraView === 'hub' && appRoot.querySelector('.category-hub')) requestAnimationFrame(() => renderHub());
+  }).observe(appRoot, { childList: true });
+  show('hub');
 }
 // Modules can finish loading after the browser's `load` event when a page is
 // restored from cache.  Boot immediately when the document is already ready
 // so the redesigned category and guide handlers are never skipped.
 let auraMaxRedesignBooted = false;
-function bootAuraMaxRedesign() {
+function bootAuraMaxRedesign(attempt = 0) {
   if (auraMaxRedesignBooted || !appRoot) return;
+  if (!window.AuraMax || typeof window.AuraMax.show !== 'function') {
+    if (attempt < 30) setTimeout(() => bootAuraMaxRedesign(attempt + 1), 50);
+    return;
+  }
   auraMaxRedesignBooted = true;
   installNavigation();
   connectGallery();
