@@ -13,6 +13,8 @@ const galleryFallback = [
 ];
 let galleryItems = [];
 let galleryClient = null;
+let activeLookbookCategory = 'All';
+let activeLookbookArticleId = null;
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const currentProfile = () => JSON.parse(localStorage.getItem(profileStore) || 'null');
 const activeGallery = () => galleryItems.length ? galleryItems : JSON.parse(localStorage.getItem(galleryStore) || 'null') || galleryFallback;
@@ -73,13 +75,26 @@ function renderColours() {
 }
 const lookbookCategories = ['Summer Fits', 'Formal', 'Denims', 'Tee', 'Luxury Casual', 'Old Money', 'Top Picks'];
 function renderLookbook(selectedCategory = 'All') {
+  activeLookbookCategory = selectedCategory;
+  activeLookbookArticleId = null;
   const sourceItems = activeGallery();
   const items = selectedCategory === 'All' ? sourceItems : sourceItems.filter(item => item.category === selectedCategory);
   const emptyState = `<div class="lookbook-empty"><h3>No ${escapeHtml(selectedCategory)} looks yet</h3><p>New outfit guides in this category will appear here as soon as they are published.</p></div>`;
-  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head"><p class="eyebrow">STYLING GUIDE · LOOKBOOK</p><h2>Find an outfit direction that fits your life.</h2><p>Explore a category, open a look and use the details as practical inspiration—not a strict rulebook.</p></section><nav class="lookbook-category-nav" aria-label="LookBook categories"><button type="button" class="${selectedCategory === 'All' ? 'active' : ''}" data-lookbook-category="All">All looks</button>${lookbookCategories.map(category => `<button type="button" class="${selectedCategory === category ? 'active' : ''}" data-lookbook-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`).join('')}</nav><div class="lookbook-grid">${items.length ? items.map(item => `<article class="lookbook-card">${imageMarkup(item)}<div><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p></div></article>`).join('') : emptyState}</div>`;
+  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head"><p class="eyebrow">STYLING GUIDE · LOOKBOOK</p><h2>Find an outfit direction that fits your life.</h2><p>Explore a category, then open any look for the full visual guide and its styling notes.</p></section><nav class="lookbook-category-nav" aria-label="LookBook categories"><button type="button" class="${selectedCategory === 'All' ? 'active' : ''}" data-lookbook-category="All">All looks</button>${lookbookCategories.map(category => `<button type="button" class="${selectedCategory === category ? 'active' : ''}" data-lookbook-category="${escapeHtml(category)}">${escapeHtml(category)}</button>`).join('')}</nav><div class="lookbook-grid">${items.length ? items.map(item => `<article class="lookbook-card"><button type="button" class="lookbook-card-open" data-lookbook-item="${escapeHtml(item.id)}" data-return-category="${escapeHtml(selectedCategory)}" aria-label="Open ${escapeHtml(item.title)} style guide">${imageMarkup(item)}<div><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description)}</p><span class="lookbook-read-link">Read style guide <b aria-hidden="true">→</b></span></div></button></article>`).join('') : emptyState}</div>`;
+}
+function renderLookbookArticle(itemId, returnCategory = activeLookbookCategory) {
+  const item = activeGallery().find(entry => String(entry.id) === String(itemId));
+  if (!item) { renderLookbook(returnCategory); return; }
+  activeLookbookArticleId = String(item.id);
+  activeLookbookCategory = returnCategory;
+  appRoot.dataset.auraView = 'lookbook-article';
+  document.body.classList.add('aura-inner-view');
+  const returnLabel = returnCategory === 'All' ? 'all looks' : returnCategory;
+  appRoot.innerHTML = `<section class="lookbook-article-shell"><button type="button" class="lookbook-article-back" data-lookbook-return data-return-category="${escapeHtml(returnCategory)}"><span aria-hidden="true">←</span> Back to ${escapeHtml(returnLabel)}</button><article class="lookbook-article"><header class="lookbook-article-header"><p class="eyebrow">STYLE GUIDE · ${escapeHtml(item.category)}</p><h1>${escapeHtml(item.title)}</h1><p class="lookbook-article-lead">A visual outfit reference to adapt to your own wardrobe, occasion and comfort.</p></header><figure class="lookbook-article-media">${imageMarkup(item)}<figcaption>${escapeHtml(item.title)} · AuraMax LookBook</figcaption></figure><section class="lookbook-article-content"><div><p class="eyebrow">ABOUT THIS LOOK</p><h2>The details that make it work</h2></div><p>${escapeHtml(item.description)}</p><div class="lookbook-article-note"><strong>Make it your own.</strong><span>Use this as a practical reference. Prioritise fit, comfort and the pieces you already wear well over copying every item exactly.</span></div></section></article></section>`;
+  appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function renderGuide() { const chapters = window.AuraMax.chapters || []; appRoot.innerHTML = `${backButton()}<section class="auramax-page-head"><p class="eyebrow">LOOKSMAX COMPLETE GUIDE</p><h2>Build the fundamentals before chasing details.</h2><p>Choose a chapter and work through a few lessons at a time.</p></section>${learnGalleryMarkup('Looksmax Complete Guide')}<div class="chapter-grid">${chapters.map(chapter => `<button class="chapter-card" data-aura-chapter="${escapeHtml(chapter.id)}"><small>CHAPTER ${escapeHtml(chapter.tag)}</small><h3>${escapeHtml(chapter.name)}</h3><p>${escapeHtml(chapter.desc)}</p></button>`).join('')}</div>`; }
-function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(); if(view==='guide')renderGuide(); }
+function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); }
 function show(view) {
   appRoot.dataset.auraView = view;
   document.body.classList.toggle('aura-inner-view', view !== 'hub');
@@ -120,6 +135,10 @@ function installNavigation() {
     }
     const lookbookCategory = event.target.closest('[data-lookbook-category]');
     if (lookbookCategory) { event.preventDefault(); event.stopImmediatePropagation(); renderLookbook(lookbookCategory.dataset.lookbookCategory); return; }
+    const lookbookItem = event.target.closest('[data-lookbook-item]');
+    if (lookbookItem) { event.preventDefault(); event.stopImmediatePropagation(); renderLookbookArticle(lookbookItem.dataset.lookbookItem, lookbookItem.dataset.returnCategory || 'All'); return; }
+    const lookbookReturn = event.target.closest('[data-lookbook-return]');
+    if (lookbookReturn) { event.preventDefault(); event.stopImmediatePropagation(); renderLookbook(lookbookReturn.dataset.returnCategory || 'All'); return; }
     const learnControl = event.target.closest('[data-learn-item]');
     if (learnControl) { event.preventDefault(); event.stopImmediatePropagation(); openLearnViewer(learnControl.dataset.learnItem); return; }
     if (event.target.closest('[data-close-learn]')) { event.preventDefault(); event.stopImmediatePropagation(); closeLearnViewer(); return; }
