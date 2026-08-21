@@ -14,15 +14,34 @@
 .learn-card-copy { padding: 17px; }
 .learn-card-copy > small { color: var(--gold); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .learn-card-copy h3 { margin: 8px 0 13px; font-size: 21px; }
-.learn-card details { border-top: 1px solid var(--line); padding-top: 11px; }
-.learn-card summary { display: flex; justify-content: space-between; color: var(--gold); font-weight: 900; cursor: pointer; list-style: none; }
-.learn-card summary::-webkit-details-marker { display: none; }
-.learn-card details p { margin: 12px 0 0; color: var(--muted); line-height: 1.58; }
-.learn-card details[open] summary span { transform: rotate(90deg); }
+.learn-open { display: flex; width: 100%; justify-content: space-between; padding: 12px 0 0; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--gold); font: inherit; font-weight: 900; cursor: pointer; text-align: left; }
+.learn-open span { transition: transform .2s ease; }
+.learn-open:hover span, .learn-open:focus-visible span { transform: translateX(5px); }
+.learn-open:focus-visible { outline: 2px solid var(--gold); outline-offset: 5px; }
+body.learn-viewer-open { overflow: hidden; }
+.learn-viewer { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; padding: 24px; }
+.learn-viewer-backdrop { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(2, 5, 10, .88); cursor: zoom-out; }
+.learn-viewer-article { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr); width: min(1120px, 100%); max-height: calc(100vh - 48px); overflow: auto; border: 1px solid rgba(230, 188, 120, .48); border-radius: 24px; background: #0d121a; box-shadow: 0 30px 90px rgba(0, 0, 0, .55); }
+.learn-viewer-media { display: grid; min-height: 520px; place-items: center; background: #05070a; }
+.learn-viewer-media img { width: 100%; height: 100%; max-height: calc(100vh - 48px); object-fit: contain; }
+.learn-viewer-media .lookbook-image-placeholder { width: 100%; min-height: 520px; }
+.learn-viewer-copy { align-self: center; padding: clamp(28px, 5vw, 58px); }
+.learn-viewer-copy h2 { margin: 8px 0 20px; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
+.learn-viewer-rule { width: 64px; height: 2px; margin-bottom: 24px; background: var(--gold); }
+.learn-viewer-description { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.75; white-space: pre-line; }
+.learn-viewer-close { position: absolute; top: 15px; right: 15px; z-index: 2; display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid rgba(255,255,255,.22); border-radius: 50%; background: rgba(5,7,10,.82); color: white; font-size: 30px; line-height: 1; cursor: pointer; }
+.learn-viewer-close:hover, .learn-viewer-close:focus-visible { border-color: var(--gold); color: var(--gold); }
 @media (max-width: 900px) { .learn-gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) {
   .learn-gallery { padding: 17px; }
   .learn-gallery-head { align-items: start; }
   .learn-gallery-grid { grid-template-columns: 1fr; }
   .learn-card > img, .learn-card > .lookbook-image-placeholder { height: 240px; }
+  .learn-viewer { padding: 10px; }
+  .learn-viewer-article { display: block; max-height: calc(100vh - 20px); border-radius: 18px; }
+  .learn-viewer-media { min-height: 0; }
+  .learn-viewer-media img { width: 100%; height: auto; max-height: 58vh; object-fit: contain; }
+  .learn-viewer-media .lookbook-image-placeholder { min-height: 300px; }
+  .learn-viewer-copy { padding: 24px 20px 32px; }
+  .learn-viewer-copy h2 { padding-right: 20px; font-size: 29px; }
 }
