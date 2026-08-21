@@ -76,7 +76,8 @@ function setAuthStatus(message, type = 'info') {
 function updateAccountLabel() {
   if (!accountButton) return;
   const email = session?.user?.email || localUser?.email;
-  accountButton.textContent = email ? (isAdmin() ? 'Admin' : 'Dashboard') : 'Sign in';
+  accountButton.textContent = email ? 'Dashboard' : 'Sign in';
+  accountButton.href = email ? (isAdmin() ? 'admin.html' : 'dashboard.html') : 'account.html';
 }
 
 function openAccount() {

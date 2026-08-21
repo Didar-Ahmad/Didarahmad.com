@@ -12,7 +12,8 @@ let mode = new URLSearchParams(location.search).get('mode') === 'recovery' ? 'up
 let client;
 
 const setStatus = (message = '', kind = '') => { status.textContent = message; status.dataset.kind = kind; };
-const dashboardUrl = () => `${location.origin}${location.pathname.replace(/account\.html$/, '')}?account=1`;
+const adminEmails = (config.adminEmails || []).map(value => value.toLowerCase());
+const destinationFor = user => `${location.origin}/${adminEmails.includes((user?.email || '').toLowerCase()) ? 'admin' : 'dashboard'}`;
 const recoveryUrl = () => `${location.origin}${location.pathname}?mode=recovery`;
 
 function render() {
@@ -30,7 +31,7 @@ async function init() {
     client = createClient(config.supabaseUrl, config.supabasePublishableKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
     client.auth.onAuthStateChange((event) => { if (event === 'PASSWORD_RECOVERY') { mode = 'update'; render(); } });
     const { data: { session } } = await client.auth.getSession();
-    if (session && mode === 'signin') location.replace(dashboardUrl());
+    if (session && mode === 'signin') location.replace(destinationFor(session.user));
   } catch { setStatus('Unable to start the account service. Check your connection and reload.', 'error'); submit.disabled = true; }
 }
 
@@ -46,15 +47,15 @@ form.addEventListener('submit', async event => {
   submit.disabled = true; setStatus('Connecting securely…');
   try {
     let error;
-    if (mode === 'signup') ({ error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: dashboardUrl() } }));
+    if (mode === 'signup') ({ error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: `${location.origin}/account` } }));
     else if (mode === 'recovery') ({ error } = await client.auth.resetPasswordForEmail(email, { redirectTo: recoveryUrl() }));
     else if (mode === 'update') ({ error } = await client.auth.updateUser({ password }));
     else ({ error } = await client.auth.signInWithPassword({ email, password }));
     if (error) throw error;
     if (mode === 'signup') { mode = 'signin'; render(); setStatus('Check your email to confirm your account, then return here to sign in.', 'success'); }
     else if (mode === 'recovery') setStatus('Reset link sent. Open it from your email to choose a new password.', 'success');
-    else if (mode === 'update') { setStatus('Password updated. Opening your dashboard…', 'success'); setTimeout(() => location.replace(dashboardUrl()), 700); }
-    else location.replace(dashboardUrl());
+    else if (mode === 'update') { const { data: { user } } = await client.auth.getUser(); setStatus('Password updated. Opening your dashboard…', 'success'); setTimeout(() => location.replace(destinationFor(user)), 700); }
+    else { const { data: { user } } = await client.auth.getUser(); location.replace(destinationFor(user)); }
   } catch (error) { setStatus(error?.message || 'We could not complete that request. Please try again.', 'error'); }
   finally { submit.disabled = false; }
 });
