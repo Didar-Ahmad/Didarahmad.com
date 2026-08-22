@@ -1,66 +1,88 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+// Self-contained Edge Function: avoids third-party module boot failures.
+const cors = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Content-Type": "application/json",
+};
 
-const cors = { "Access-Control-Allow-Origin": "https://www.didarahmad.com", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type", "Content-Type": "application/json" };
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: cors });
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), { status, headers: cors });
 
-function getServiceKey() {
+function serviceKey() {
   const raw = Deno.env.get("SUPABASE_SECRET_KEYS");
   if (raw) {
     try {
-      const keys = JSON.parse(raw);
-      const namedKey = keys.service_role ?? keys.service_role_key ?? keys.secret;
-      if (typeof namedKey === "string" && namedKey.trim()) return namedKey;
-
-      // New Supabase projects expose secret keys as a keyed object rather than
-      // the legacy service_role property. Use the available server secret,
-      // never a publishable/anon key.
-      const serverKey = Object.values(keys).find((value) =>
-        typeof value === "string" && value.startsWith("sb_secret_")
-      );
-      if (typeof serverKey === "string") return serverKey;
-    } catch { /* fall through to legacy runtime key */ }
+      const keys: Record<string, unknown> = JSON.parse(raw);
+      for (const value of Object.values(keys)) {
+        if (typeof value === "string" && value.startsWith("sb_secret_")) return value;
+      }
+    } catch { /* use legacy secret below */ }
   }
   return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY");
+}
+
+async function supabase(url: string, key: string, path: string, init: RequestInit = {}) {
+  const headers = new Headers(init.headers);
+  headers.set("apikey", key);
+  if (!headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${key}`);
+  }
+  return fetch(`${url}${path}`, { ...init, headers });
 }
 
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  const authorization = request.headers.get("Authorization");
+
   const url = Deno.env.get("SUPABASE_URL");
-  const serviceKey = getServiceKey();
+  const key = serviceKey();
+  const userToken = request.headers.get("Authorization")?.replace(/^Bearer\s+/i, "");
   const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
   const razorpaySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
-  if (!authorization || !url || !serviceKey || !razorpayKeyId || !razorpaySecret) return json({ error: "Payment configuration is incomplete." }, 500);
+  if (!url || !key || !userToken || !razorpayKeyId || !razorpaySecret) {
+    return json({ error: "Payment configuration is incomplete." }, 500);
+  }
 
-  const admin = createClient(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } });
-  const token = authorization.replace(/^Bearer\s+/i, "");
-  const { data: { user }, error: authError } = await admin.auth.getUser(token);
-  if (authError || !user) return json({ error: "Please sign in before buying access." }, 401);
-
-  const amount = 19900; // ₹199.00, one-time 30-day access
-  const receipt = `auramax_${user.id.replaceAll("-", "").slice(0, 18)}_${Date.now()}`;
-  const basic = btoa(`${razorpayKeyId}:${razorpaySecret}`);
-  const response = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ amount, currency: "INR", receipt, notes: { user_id: user.id, plan_code: "personal_30_day", access_days: "30" } })
+  const userResponse = await supabase(url, key, "/auth/v1/user", {
+    headers: { Authorization: `Bearer ${userToken}` },
   });
-  const order = await response.json();
-  if (!response.ok || !order.id) return json({ error: "Razorpay could not create the order. Please try again." }, 502);
+  const user = await userResponse.json().catch(() => null);
+  if (!userResponse.ok || !user?.id) return json({ error: "Please sign in before buying access." }, 401);
 
-  const { error: insertError } = await admin.from("auramax_payment_orders").insert({ user_id: user.id, razorpay_order_id: order.id, amount, currency: "INR", plan_code: "personal_30_day", access_days: 30 });
-  if (insertError) return json({ error: "Could not prepare payment access." }, 500);
+  const amount = 19900;
+  const receipt = `auramax_${String(user.id).replaceAll("-", "").slice(0, 18)}_${Date.now()}`;
+  const razorpayResponse = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${btoa(`${razorpayKeyId}:${razorpaySecret}`)}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount,
+      currency: "INR",
+      receipt,
+      notes: { user_id: user.id, plan_code: "personal_30_day", access_days: "30" },
+    }),
+  });
+  const order = await razorpayResponse.json().catch(() => null);
+  if (!razorpayResponse.ok || !order?.id) {
+    return json({ error: "Razorpay could not create the order. Please try again." }, 502);
+  }
+
+  const insert = await supabase(url, key, "/rest/v1/auramax_payment_orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Prefer: "return=minimal" },
+    body: JSON.stringify({
+      user_id: user.id,
+      razorpay_order_id: order.id,
+      amount,
+      currency: "INR",
+      plan_code: "personal_30_day",
+      access_days: 30,
+    }),
+  });
+  if (!insert.ok) return json({ error: "Could not prepare payment access." }, 500);
+
   return json({ orderId: order.id, amount, currency: "INR", keyId: razorpayKeyId, planName: "AuraMax Personal Plan" });
 });
-
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/auramax-create-order' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --header 'Authorization: Bearer <UserToken>'
-*/
