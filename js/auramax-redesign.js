@@ -73,7 +73,44 @@ function renderHub() {
   };
   const hasProfile = Boolean(currentProfile());
   const hasPlan = Boolean(window.AuraMaxStylePlan?.load());
-  appRoot.innerHTML = `<section class="auramax-intro"><p class="eyebrow">YOUR PERSONALISED LOOKBOOK</p><h2>Build your style, one practical choice at a time.</h2><p>${hasProfile ? 'Your saved profile can now power a clear style plan and every guide below.' : 'Start with a category, then personalise your guide whenever you want.'}</p></section><section class="style-plan-banner"><div><p class="eyebrow">PERSONAL STYLE PLAN</p><h3>${hasPlan ? 'Your personalised recommendations are ready.' : 'Turn your selections into a practical personal plan.'}</h3><p>Get recommended colours, easy outfit formulas, grooming priorities and a short avoid list based on your face, body and skin selections.</p></div><button type="button" data-aura-view="style-plan">${hasPlan ? 'Open my plan →' : 'Build my plan →'}</button></section><section class="auramax-category-grid" aria-label="AuraMax categories"><button class="aura-category tone-gold" data-aura-view="colours">${visuals.colours}<span>01</span><h3>Color Combination</h3><p>Learn simple outfit colour formulas and see what pieces work together.</p><b>Explore colour ideas →</b></button><button class="aura-category tone-blue" data-aura-view="lookbook">${visuals.lookbook}<span>02</span><h3>Styling Guide · LookBook</h3><p>Browse real outfit inspiration with the details that make each look work.</p><b>Open the gallery →</b></button><button class="aura-category tone-green" data-aura-view="quick">${visuals.quick}<span>03</span><h3>Quick Looksmax Tips</h3><p>Fast, useful techniques for grooming, hair, skin, posture and presence.</p><b>Get quick tips →</b></button><button class="aura-category tone-red" data-aura-view="qa">${visuals.qa}<span>04</span><h3>Looksmax Q&amp;A Advanced</h3><p>Search clear answers, techniques and common mistakes without the noise.</p><b>Ask a question →</b></button><button class="aura-category tone-purple" data-aura-view="guide">${visuals.guide}<span>05</span><h3>Looksmax Complete Guide</h3><p>Go deeper with practical chapters on grooming, health, style and confidence.</p><b>Read the full guide →</b></button></section>`;
+  const transformation = window.AuraMaxTransformationPlan?.load() || { completedDays: [] };
+  const completed = transformation.completedDays?.length || 0;
+  const percent = window.AuraMaxTransformationPlan?.percentage(transformation) || 0;
+  appRoot.innerHTML = `<section class="auramax-intro"><p class="eyebrow">YOUR PERSONALISED LOOKBOOK</p><h2>Build your style, one practical choice at a time.</h2><p>${hasProfile ? 'Your saved profile can now power a clear style plan and every guide below.' : 'Start with a category, then personalise your guide whenever you want.'}</p></section><section class="transformation-banner"><div><p class="eyebrow">PREMIUM 30-DAY TRANSFORMATION PLAN</p><h3>One clear action every day. A routine you can keep.</h3><p>A healthy, practical month of grooming, style, movement, posture and wardrobe resets—built to create confidence through consistency.</p><div class="transformation-banner-progress"><span>${completed}/30 days complete</span><div><i style="width:${percent}%"></i></div><strong>${percent}%</strong></div></div><button type="button" data-aura-view="transformation">${completed ? 'Continue my 30-day plan →' : 'Start the 30-day plan →'}</button></section><section class="style-plan-banner"><div><p class="eyebrow">PERSONAL STYLE PLAN</p><h3>${hasPlan ? 'Your personalised recommendations are ready.' : 'Turn your selections into a practical personal plan.'}</h3><p>Get recommended colours, easy outfit formulas, grooming priorities and a short avoid list based on your face, body and skin selections.</p></div><button type="button" data-aura-view="style-plan">${hasPlan ? 'Open my plan →' : 'Build my plan →'}</button></section><section class="auramax-category-grid" aria-label="AuraMax categories"><button class="aura-category tone-gold" data-aura-view="colours">${visuals.colours}<span>01</span><h3>Color Combination</h3><p>Learn simple outfit colour formulas and see what pieces work together.</p><b>Explore colour ideas →</b></button><button class="aura-category tone-blue" data-aura-view="lookbook">${visuals.lookbook}<span>02</span><h3>Styling Guide · LookBook</h3><p>Browse real outfit inspiration with the details that make each look work.</p><b>Open the gallery →</b></button><button class="aura-category tone-green" data-aura-view="quick">${visuals.quick}<span>03</span><h3>Quick Looksmax Tips</h3><p>Fast, useful techniques for grooming, hair, skin, posture and presence.</p><b>Get quick tips →</b></button><button class="aura-category tone-red" data-aura-view="qa">${visuals.qa}<span>04</span><h3>Looksmax Q&amp;A Advanced</h3><p>Search clear answers, techniques and common mistakes without the noise.</p><b>Ask a question →</b></button><button class="aura-category tone-purple" data-aura-view="guide">${visuals.guide}<span>05</span><h3>Looksmax Complete Guide</h3><p>Go deeper with practical chapters on grooming, health, style and confidence.</p><b>Read the full guide →</b></button></section>`;
+}
+function renderTransformationPlan() {
+  const planner = window.AuraMaxTransformationPlan;
+  if (!planner) return;
+  const progress = planner.load();
+  const complete = new Set(progress.completedDays);
+  const percent = planner.percentage(progress);
+  const currentDay = planner.days.find(item => !complete.has(item.day))?.day || 30;
+  const themes = ['Reset', 'Grooming', 'Posture', 'Fitness', 'Wardrobe', 'Confidence', 'Wellbeing'];
+  appRoot.innerHTML = `${backButton()}<article class="transformation-shell"><header class="transformation-header"><div><p class="eyebrow">AURAMAX PREMIUM · 30-DAY TRANSFORMATION PLAN</p><h1>Build a stronger routine, one day at a time.</h1><p>This is a healthy grooming, style, movement, posture and wardrobe-reset plan. It is designed for practical confidence—not unsafe appearance changes, extreme diets or unrealistic standards.</p></div><div class="transformation-score"><strong>${percent}%</strong><span>${complete.size} of 30 days complete</span></div></header><section class="transformation-today"><div><p class="eyebrow">YOUR NEXT STEP</p><h2>Day ${currentDay}: ${escapeHtml(planner.days[currentDay - 1].title)}</h2><p>${escapeHtml(planner.days[currentDay - 1].task)}</p></div><button type="button" data-transformation-scroll="${currentDay}">See today’s task ↓</button></section><nav class="transformation-themes" aria-label="Plan themes">${themes.map(theme => `<span>${escapeHtml(theme)}</span>`).join('')}</nav><section class="transformation-days" aria-label="30-day transformation tasks">${planner.days.map(item => `<article class="transformation-day ${complete.has(item.day) ? 'is-complete' : ''}" id="transformation-day-${item.day}"><button type="button" class="transformation-check" data-transformation-day="${item.day}" aria-pressed="${complete.has(item.day)}" aria-label="Mark day ${item.day} as ${complete.has(item.day) ? 'incomplete' : 'complete'}"><span>${complete.has(item.day) ? '✓' : item.day}</span></button><div><p class="eyebrow">DAY ${String(item.day).padStart(2, '0')} · ${escapeHtml(item.theme)}</p><h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.task)}</p></div></article>`).join('')}</section><aside class="transformation-disclaimer"><strong>Build healthy habits, not pressure.</strong><span>Adapt every task to your body, budget, schedule and comfort. Pause any activity that causes pain or distress and seek qualified support for personal health, skin, dental or fitness concerns.</span></aside></article>`;
+  syncTransformationProgress();
+}
+async function syncTransformationProgress() {
+  if (!galleryClient || appRoot.dataset.auraView !== 'transformation') return;
+  const { data: { user } } = await galleryClient.auth.getUser();
+  if (!user) return;
+  const { data, error } = await galleryClient.from('auramax_transformation_progress').select('completed_days, started_at, updated_at').eq('user_id', user.id).maybeSingle();
+  if (!error && data) {
+    const local = window.AuraMaxTransformationPlan.load();
+    const merged = [...new Set([...(local.completedDays || []), ...(data.completed_days || [])])];
+    if (merged.length !== local.completedDays.length) {
+      window.AuraMaxTransformationPlan.merge({ completedDays: merged, startedAt: data.started_at, updatedAt: data.updated_at });
+      renderTransformationPlan();
+    }
+  } else if (!error) {
+    const local = window.AuraMaxTransformationPlan.load();
+    if (local.completedDays?.length) await persistTransformationProgress(local);
+  }
+}
+async function persistTransformationProgress(progress) {
+  if (!galleryClient) return;
+  const { data: { user } } = await galleryClient.auth.getUser();
+  if (!user) return;
+  await galleryClient.from('auramax_transformation_progress').upsert({ user_id: user.id, completed_days: progress.completedDays, started_at: progress.startedAt || new Date().toISOString(), updated_at: new Date().toISOString() });
 }
 function renderStylePlan() {
   const profile = currentProfile();
@@ -194,7 +231,7 @@ function renderGuideLesson(chapterId, index) {
   appRoot.innerHTML = `<article class="guide-reader guide-article"><button type="button" class="guide-back-button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"><span aria-hidden="true">←</span> Back to ${escapeHtml(chapter.name)}</button><header><p class="eyebrow">CHAPTER ${escapeHtml(chapter.tag)} · LESSON ${String(lessonIndex + 1).padStart(2, '0')}</p><h1>${escapeHtml(title)}</h1><p class="guide-reader-lead">${escapeHtml(summary)}</p></header><div class="guide-article-body"><section><h2>The practical approach</h2><p>${escapeHtml(premium.principle)}</p><p>${escapeHtml(premium.focus)}</p></section><section><h2>What to do</h2><ol><li>${escapeHtml(firstStep || 'Start with the smallest comfortable action you can repeat.')}</li><li>${escapeHtml(secondStep || 'Keep the routine simple enough to follow consistently.')}</li><li>Review what feels useful after a week, then adjust one detail at a time.</li></ol></section><section><h2>Build it into your week</h2><ol>${premium.routine.map(step => `<li>${escapeHtml(step)}</li>`).join('')}</ol></section><aside class="guide-article-callout"><p class="eyebrow">COMMON MISTAKES</p><h2>Small changes that make a difference</h2>${premium.mistakes.map(([avoid, instead]) => `<p><strong>Instead of ${escapeHtml(avoid)},</strong> ${escapeHtml(instead)}</p>`).join('')}</aside><section><h2>What good progress looks like</h2><ul>${premium.examples.map(example => `<li>${escapeHtml(example)}</li>`).join('')}</ul></section><section class="guide-article-takeaway"><h2>Take this with you</h2><ul>${premium.checklist.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section><aside class="guide-reader-note"><strong>A healthy, sustainable guide.</strong><span>Use this guide for healthy grooming, style, confidence and habits—not unsafe appearance changes. Comfort, health and consistency matter more than chasing a perfect result.</span></aside></div><nav class="guide-reader-navigation" aria-label="Lesson navigation"><button type="button" ${previous === null ? 'disabled' : `data-aura-guide-navigate="${previous}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>← Previous lesson</button><button type="button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}">All lessons</button><button type="button" ${next === null ? 'disabled' : `data-aura-guide-navigate="${next}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>Next lesson →</button></nav></article>`;
   appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='style-plan')renderStylePlan(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); if(view==='guide-chapter')renderGuideChapter(activeGuideChapterId); if(view==='guide-lesson')renderGuideLesson(activeGuideChapterId, activeGuideLessonIndex); }
+function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='style-plan')renderStylePlan(); if(view==='transformation')renderTransformationPlan(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); if(view==='guide-chapter')renderGuideChapter(activeGuideChapterId); if(view==='guide-lesson')renderGuideLesson(activeGuideChapterId, activeGuideLessonIndex); }
 function show(view) {
   appRoot.dataset.auraView = view;
   document.body.classList.toggle('aura-inner-view', view !== 'hub');
@@ -240,6 +277,20 @@ function installNavigation() {
       const profile = currentProfile();
       if (profile) window.AuraMaxStylePlan?.createAndSave(profile, true);
       show('style-plan');
+      return;
+    }
+    const transformationDay = event.target.closest('[data-transformation-day]');
+    if (transformationDay) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const progress = window.AuraMaxTransformationPlan?.toggle(Number(transformationDay.dataset.transformationDay));
+      if (progress) { renderTransformationPlan(); persistTransformationProgress(progress); }
+      return;
+    }
+    const transformationScroll = event.target.closest('[data-transformation-scroll]');
+    if (transformationScroll) {
+      event.preventDefault();
+      document.querySelector(`#transformation-day-${transformationScroll.dataset.transformationScroll}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     const skinControl = event.target.closest('[data-skin-guide]');
