@@ -54,7 +54,12 @@ async function buyPersonalPlan(trigger) {
         await refreshAccess();
         alert('Payment confirmed. Your 30-day AuraMax Personal Plan is active.');
         window.AuraMax?.show?.('style-plan');
-      } catch (error) { alert(error.message || 'Payment was received, but access is still being confirmed. Please refresh in a moment.'); }
+      } catch (error) {
+        await refreshAccess().catch(() => false);
+        alert(premium ? 'Payment confirmed. Your 30-day AuraMax Personal Plan is active.' : (error.message || 'Payment was received, but access is still being confirmed. Please refresh in a moment.'));
+      } finally {
+        if (trigger) { trigger.disabled = false; trigger.textContent = trigger.dataset.originalText || 'Unlock personal plan'; }
+      }
     }, modal: { ondismiss: () => { if (trigger) { trigger.disabled = false; trigger.textContent = trigger.dataset.originalText || 'Unlock personal plan'; } } } });
     checkout.open();
   } catch (error) {
