@@ -435,7 +435,7 @@ installNavigation = function installPremiumNavigation() {
   }, true);
 };
 
-window.addEventListener('load', () => {
+function initializeAuraMaxRedesign() {
   installNavigation();
   connectGallery();
 
@@ -455,7 +455,18 @@ window.addEventListener('load', () => {
       wasOpen = isOpen;
     }).observe(onboarding, { attributes: true, attributeFilter: ['class'] });
   }
-});
+}
+
+// Module scripts can finish loading after the browser's `load` event (for
+// example when an imported dependency is fetched slowly).  In that case a
+// load-only listener never runs and dynamically rendered controls, including
+// the Personal Plan unlock button, appear to do nothing.  Initialise
+// immediately when the document has already finished loading instead.
+if (document.readyState === 'complete') {
+  initializeAuraMaxRedesign();
+} else {
+  window.addEventListener('load', initializeAuraMaxRedesign, { once: true });
+}
 
 async function openGalleryAdmin() {
   if (!galleryClient) { alert('To use shared gallery uploads, add the Supabase publishable key and run supabase/auramax_gallery.sql first.'); return; }
