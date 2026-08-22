@@ -423,16 +423,22 @@ show = function showWithPremiumPreview(view) {
   if (view === 'quick' && !window.AuraMaxPayments?.isPremium()) applyFreeQuickTipPreview();
 };
 
+function handlePersonalPlanUnlock(event) {
+  const unlock = event.target.closest('[data-aura-unlock]');
+  if (!unlock) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  renderUnlockPreview();
+}
+
+// Keep this separate from the view initialiser. The unlock button may be
+// inserted by a render that happens after navigation has already been set up.
+// Delegating at document level guarantees it stays usable after every redraw.
+document.addEventListener('click', handlePersonalPlanUnlock, true);
+
 const originalAuraInstallNavigation = installNavigation;
 installNavigation = function installPremiumNavigation() {
   originalAuraInstallNavigation();
-  document.addEventListener('click', event => {
-    const unlock = event.target.closest('[data-aura-unlock]');
-    if (!unlock) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    renderUnlockPreview();
-  }, true);
 };
 
 function initializeAuraMaxRedesign() {
