@@ -360,13 +360,13 @@ const fullAuraRenderStylePlan = renderStylePlan;
 
 function premiumGateMarkup(title, detail, options = {}) {
   const button = options.button || 'Unlock your personal plan';
-  return `<section class="premium-gate" aria-label="Premium personal plan preview"><span class="premium-gate-kicker">PERSONAL PLAN</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(detail)}</p><ul><li>Personal recommendations based on your saved profile</li><li>Full LookBook access and complete guides</li><li>Structured routines, checklists and progress tools</li></ul><button class="button primary premium-gate-button" type="button" data-aura-unlock>${escapeHtml(button)} <span aria-hidden="true">→</span></button><p class="premium-gate-note">Your free profile and free tools stay available.</p></section>`;
+  return `<section class="premium-gate" aria-label="Premium personal plan preview"><span class="premium-gate-kicker">PERSONAL PLAN · ₹199 / 30 DAYS</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(detail)}</p><ul><li>Personal recommendations based on your saved profile</li><li>Full LookBook access and complete guides</li><li>Structured routines, checklists and progress tools</li></ul><button class="button primary premium-gate-button" type="button" data-aura-purchase>${escapeHtml(button)} <span aria-hidden="true">→</span></button><p class="premium-gate-note">One-time payment. No auto-renewal. Your free profile and tools stay available.</p></section>`;
 }
 
 function renderUnlockPreview() {
   appRoot.dataset.auraView = 'premium-preview';
   document.body.classList.add('aura-inner-view');
-  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page"><p class="eyebrow">AURAMAX PERSONAL PLAN</p><h2>Unlock your personal plan.</h2><p class="premium-preview-lede">You have explored the free foundation. Premium access will bring your saved profile, style direction, routines and learning tools into one guided plan.</p><div class="premium-preview-grid"><article><span>01</span><h3>Use your profile</h3><p>Turn your face, body and skin-tone choices into a practical starting point.</p></article><article><span>02</span><h3>Follow a clear routine</h3><p>Move through style, grooming and confidence habits at a steady pace.</p></article><article><span>03</span><h3>Save what works</h3><p>Keep outfit formulas, checklists and favourite looks in one place.</p></article></div><div class="premium-preview-action"><h3>Premium access is being prepared.</h3><p>Create a free AuraMax account now to save your profile and be ready when membership access opens.</p><button class="button primary" type="button" data-aura-account-signup>Create free account</button><button class="button secondary" type="button" data-aura-view="hub">Continue with free tools</button></div></section>`;
+  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page"><p class="eyebrow">AURAMAX PERSONAL PLAN</p><h2>Unlock your personal plan.</h2><p class="premium-preview-lede">One payment gives you 30 days of full guides, routines, the complete LookBook and saved progress.</p><div class="premium-preview-grid"><article><span>01</span><h3>Use your profile</h3><p>Turn your face, body and skin-tone choices into a practical starting point.</p></article><article><span>02</span><h3>Follow a clear routine</h3><p>Move through style, grooming and confidence habits at a steady pace.</p></article><article><span>03</span><h3>Save what works</h3><p>Keep outfit formulas, checklists and favourite looks in one place.</p></article></div><div class="premium-preview-action"><h3>₹199 for 30 days</h3><p>One-time payment. No auto-renewal.</p><button class="button primary" type="button" data-aura-purchase>Unlock Personal Plan</button><button class="button secondary" type="button" data-aura-view="hub">Continue with free tools</button></div></section>`;
   appRoot.querySelector('[data-aura-account-signup]')?.addEventListener('click', () => { window.location.href = 'account.html?mode=signup'; });
 }
 
@@ -406,6 +406,7 @@ renderHub = function renderHubWithFreeFoundation() {
 
 renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
   fullAuraRenderLookbook(selectedCategory);
+  if (window.AuraMaxPayments?.isPremium()) return;
   appRoot.classList.add('free-lookbook-preview');
   const cards = [...appRoot.querySelectorAll('[data-lookbook-item]')];
   cards.slice(3).forEach(card => card.remove());
@@ -413,13 +414,13 @@ renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
   if (grid && !grid.querySelector('.lookbook-preview-lock')) grid.insertAdjacentHTML('beforeend', `<div class="lookbook-preview-lock">${premiumGateMarkup('See the rest of the LookBook in your personal plan.', 'You can explore these free examples now. Unlock the full library to save looks and see complete styling notes.')}</div>`);
 };
 
-renderStylePlan = renderLockedStylePlan;
+renderStylePlan = function renderStylePlanWithAccess() { if (window.AuraMaxPayments?.isPremium()) fullAuraRenderStylePlan(); else renderLockedStylePlan(); };
 
 const originalAuraShow = show;
 show = function showWithPremiumPreview(view) {
-  if (view === 'qa' || view === 'guide' || view === 'transformation') { renderPremiumSection(view); return; }
+  if (view === 'qa' || view === 'guide' || view === 'transformation') { if (window.AuraMaxPayments?.isPremium()) { originalAuraShow(view); } else renderPremiumSection(view); return; }
   originalAuraShow(view);
-  if (view === 'quick') applyFreeQuickTipPreview();
+  if (view === 'quick' && !window.AuraMaxPayments?.isPremium()) applyFreeQuickTipPreview();
 };
 
 const originalAuraInstallNavigation = installNavigation;
