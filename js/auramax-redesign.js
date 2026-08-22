@@ -71,7 +71,25 @@ function renderHub() {
     qa: '<div class="aura-card-visual visual-qa" aria-hidden="true"><i>?</i><i>!</i><i>✓</i><b>Clear answers</b></div>',
     guide: '<div class="aura-card-visual visual-guide" aria-hidden="true"><img src="assets/complete-guide-category-card.png" alt=""><span></span><b>Complete Guide</b></div>'
   };
-  appRoot.innerHTML = `<section class="auramax-intro"><p class="eyebrow">YOUR PERSONALISED LOOKBOOK</p><h2>Build your style, one practical choice at a time.</h2><p>${currentProfile() ? 'Your face and body selections are saved. Choose a category to start.' : 'Start with a category, then personalise your guide whenever you want.'}</p></section><section class="auramax-category-grid" aria-label="AuraMax categories"><button class="aura-category tone-gold" data-aura-view="colours">${visuals.colours}<span>01</span><h3>Color Combination</h3><p>Learn simple outfit colour formulas and see what pieces work together.</p><b>Explore colour ideas →</b></button><button class="aura-category tone-blue" data-aura-view="lookbook">${visuals.lookbook}<span>02</span><h3>Styling Guide · LookBook</h3><p>Browse real outfit inspiration with the details that make each look work.</p><b>Open the gallery →</b></button><button class="aura-category tone-green" data-aura-view="quick">${visuals.quick}<span>03</span><h3>Quick Looksmax Tips</h3><p>Fast, useful techniques for grooming, hair, skin, posture and presence.</p><b>Get quick tips →</b></button><button class="aura-category tone-red" data-aura-view="qa">${visuals.qa}<span>04</span><h3>Looksmax Q&amp;A Advanced</h3><p>Search clear answers, techniques and common mistakes without the noise.</p><b>Ask a question →</b></button><button class="aura-category tone-purple" data-aura-view="guide">${visuals.guide}<span>05</span><h3>Looksmax Complete Guide</h3><p>Go deeper with practical chapters on grooming, health, style and confidence.</p><b>Read the full guide →</b></button></section>`;
+  const hasProfile = Boolean(currentProfile());
+  const hasPlan = Boolean(window.AuraMaxStylePlan?.load());
+  appRoot.innerHTML = `<section class="auramax-intro"><p class="eyebrow">YOUR PERSONALISED LOOKBOOK</p><h2>Build your style, one practical choice at a time.</h2><p>${hasProfile ? 'Your saved profile can now power a clear style plan and every guide below.' : 'Start with a category, then personalise your guide whenever you want.'}</p></section><section class="style-plan-banner"><div><p class="eyebrow">PERSONAL STYLE PLAN</p><h3>${hasPlan ? 'Your personalised recommendations are ready.' : 'Turn your selections into a practical personal plan.'}</h3><p>Get recommended colours, easy outfit formulas, grooming priorities and a short avoid list based on your face, body and skin selections.</p></div><button type="button" data-aura-view="style-plan">${hasPlan ? 'Open my plan →' : 'Build my plan →'}</button></section><section class="auramax-category-grid" aria-label="AuraMax categories"><button class="aura-category tone-gold" data-aura-view="colours">${visuals.colours}<span>01</span><h3>Color Combination</h3><p>Learn simple outfit colour formulas and see what pieces work together.</p><b>Explore colour ideas →</b></button><button class="aura-category tone-blue" data-aura-view="lookbook">${visuals.lookbook}<span>02</span><h3>Styling Guide · LookBook</h3><p>Browse real outfit inspiration with the details that make each look work.</p><b>Open the gallery →</b></button><button class="aura-category tone-green" data-aura-view="quick">${visuals.quick}<span>03</span><h3>Quick Looksmax Tips</h3><p>Fast, useful techniques for grooming, hair, skin, posture and presence.</p><b>Get quick tips →</b></button><button class="aura-category tone-red" data-aura-view="qa">${visuals.qa}<span>04</span><h3>Looksmax Q&amp;A Advanced</h3><p>Search clear answers, techniques and common mistakes without the noise.</p><b>Ask a question →</b></button><button class="aura-category tone-purple" data-aura-view="guide">${visuals.guide}<span>05</span><h3>Looksmax Complete Guide</h3><p>Go deeper with practical chapters on grooming, health, style and confidence.</p><b>Read the full guide →</b></button></section>`;
+}
+function renderStylePlan() {
+  const profile = currentProfile();
+  if (!profile) {
+    appRoot.innerHTML = `${backButton()}<section class="style-plan-shell style-plan-empty"><p class="eyebrow">PERSONAL STYLE PLAN</p><h2>Start with your profile.</h2><p>Your plan is created from your face shape, body type and skin tone. Complete the short guide first, then AuraMax will save recommendations you can revisit.</p><button type="button" class="button-gold" id="style-plan-open-profile">Set up my profile →</button></section>`;
+    document.querySelector('#style-plan-open-profile')?.addEventListener('click', () => document.querySelector('#edit-profile')?.click());
+    return;
+  }
+  if (!profile.skinTone && !profile.skin) {
+    const choices = ['Fair / light', 'Medium / wheatish', 'Olive', 'Deep / dark'];
+    appRoot.innerHTML = `${backButton()}<section class="style-plan-shell"><p class="eyebrow">ONE LAST DETAIL</p><h2>Which skin-depth guide feels closest?</h2><p>This is only used to suggest clothing colours with useful contrast. Choose the closest starting point—you can change it later.</p><div class="style-plan-choice-grid">${choices.map(choice => `<button type="button" data-style-skin="${choice}"><strong>${choice}</strong><span>Use this colour guide →</span></button>`).join('')}</div></section>`;
+    return;
+  }
+  const plan = window.AuraMaxStylePlan?.createAndSave(profile) || null;
+  if (!plan) return;
+  appRoot.innerHTML = `${backButton()}<article class="style-plan-shell"><header class="style-plan-header"><div><p class="eyebrow">YOUR SAVED PERSONAL STYLE PLAN</p><h1>Build on what already suits you.</h1><p>This is a practical starting point based on your saved profile. Use the recommendations as flexible guidance—not strict rules.</p></div><button type="button" class="text-link" data-refresh-style-plan>Refresh plan ↻</button></header><div class="style-plan-profile-tags"><span>${escapeHtml(plan.profile.face)} face</span><span>${escapeHtml(plan.profile.body)} body</span><span>${escapeHtml(plan.profile.skinTone)} skin guide</span></div><section class="style-plan-grid"><article><p class="eyebrow">COLOURS TO REPEAT</p><h2>Recommended colours</h2><div class="style-plan-colours">${plan.recommendedColours.map(colour => `<span>${escapeHtml(colour)}</span>`).join('')}</div></article><article><p class="eyebrow">EASY OUTFITS</p><h2>Outfit formulas</h2><ol>${plan.outfitFormulas.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ol></article><article><p class="eyebrow">GROOMING FIRST</p><h2>Priorities</h2><ol>${plan.groomingPriorities.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ol></article><article><p class="eyebrow">KEEP IT SIMPLE</p><h2>Suggestions to avoid</h2><ul>${plan.avoids.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></article></section><aside class="style-plan-note"><strong>Healthy confidence first.</strong><span>Focus on healthy grooming, style, comfort and habits. AuraMax does not recommend unsafe appearance changes or unrealistic standards.</span></aside></article>`;
 }
 function renderColours() {
   const skinGuides = [
@@ -176,7 +194,7 @@ function renderGuideLesson(chapterId, index) {
   appRoot.innerHTML = `<article class="guide-reader guide-article"><button type="button" class="guide-back-button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"><span aria-hidden="true">←</span> Back to ${escapeHtml(chapter.name)}</button><header><p class="eyebrow">CHAPTER ${escapeHtml(chapter.tag)} · LESSON ${String(lessonIndex + 1).padStart(2, '0')}</p><h1>${escapeHtml(title)}</h1><p class="guide-reader-lead">${escapeHtml(summary)}</p></header><div class="guide-article-body"><section><h2>The practical approach</h2><p>${escapeHtml(premium.principle)}</p><p>${escapeHtml(premium.focus)}</p></section><section><h2>What to do</h2><ol><li>${escapeHtml(firstStep || 'Start with the smallest comfortable action you can repeat.')}</li><li>${escapeHtml(secondStep || 'Keep the routine simple enough to follow consistently.')}</li><li>Review what feels useful after a week, then adjust one detail at a time.</li></ol></section><section><h2>Build it into your week</h2><ol>${premium.routine.map(step => `<li>${escapeHtml(step)}</li>`).join('')}</ol></section><aside class="guide-article-callout"><p class="eyebrow">COMMON MISTAKES</p><h2>Small changes that make a difference</h2>${premium.mistakes.map(([avoid, instead]) => `<p><strong>Instead of ${escapeHtml(avoid)},</strong> ${escapeHtml(instead)}</p>`).join('')}</aside><section><h2>What good progress looks like</h2><ul>${premium.examples.map(example => `<li>${escapeHtml(example)}</li>`).join('')}</ul></section><section class="guide-article-takeaway"><h2>Take this with you</h2><ul>${premium.checklist.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section><aside class="guide-reader-note"><strong>A healthy, sustainable guide.</strong><span>Use this guide for healthy grooming, style, confidence and habits—not unsafe appearance changes. Comfort, health and consistency matter more than chasing a perfect result.</span></aside></div><nav class="guide-reader-navigation" aria-label="Lesson navigation"><button type="button" ${previous === null ? 'disabled' : `data-aura-guide-navigate="${previous}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>← Previous lesson</button><button type="button" data-aura-guide-back="chapter" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}">All lessons</button><button type="button" ${next === null ? 'disabled' : `data-aura-guide-navigate="${next}" data-aura-guide-chapter-id="${escapeHtml(chapter.id)}"`}>Next lesson →</button></nav></article>`;
   appRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); if(view==='guide-chapter')renderGuideChapter(activeGuideChapterId); if(view==='guide-lesson')renderGuideLesson(activeGuideChapterId, activeGuideLessonIndex); }
+function renderCurrentView() { const view = appRoot.dataset.auraView || 'hub'; if(view==='hub')renderHub(); if(view==='style-plan')renderStylePlan(); if(view==='colours')renderColours(); if(view==='lookbook')renderLookbook(activeLookbookCategory); if(view==='lookbook-article')renderLookbookArticle(activeLookbookArticleId, activeLookbookCategory); if(view==='guide')renderGuide(); if(view==='guide-chapter')renderGuideChapter(activeGuideChapterId); if(view==='guide-lesson')renderGuideLesson(activeGuideChapterId, activeGuideLessonIndex); }
 function show(view) {
   appRoot.dataset.auraView = view;
   document.body.classList.toggle('aura-inner-view', view !== 'hub');
@@ -206,6 +224,24 @@ function show(view) {
 function installNavigation() {
   const legacyShow = window.AuraMax.show; window.AuraMax.legacyShow = legacyShow; window.AuraMax.show = show;
   document.addEventListener('click', event => {
+    const styleSkin = event.target.closest('[data-style-skin]');
+    if (styleSkin) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const profile = { ...(currentProfile() || {}), skinTone: styleSkin.dataset.styleSkin };
+      localStorage.setItem(profileStore, JSON.stringify(profile));
+      window.AuraMaxStylePlan?.createAndSave(profile, true);
+      show('style-plan');
+      return;
+    }
+    if (event.target.closest('[data-refresh-style-plan]')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const profile = currentProfile();
+      if (profile) window.AuraMaxStylePlan?.createAndSave(profile, true);
+      show('style-plan');
+      return;
+    }
     const skinControl = event.target.closest('[data-skin-guide]');
     if (skinControl) {
       event.preventDefault();
@@ -235,7 +271,7 @@ function installNavigation() {
     const viewControl = event.target.closest('[data-aura-view]'); if(viewControl){event.preventDefault();event.stopImmediatePropagation();show(viewControl.dataset.auraView);return;} const legacyControl=event.target.closest('[data-view]'); if(legacyControl){event.preventDefault();event.stopImmediatePropagation();show(legacyControl.dataset.view==='style'?'lookbook':legacyControl.dataset.view);return;} const chapterControl=event.target.closest('[data-aura-chapter]');if(chapterControl){event.preventDefault();event.stopImmediatePropagation();window.AuraMax.chapter(chapterControl.dataset.auraChapter);return;}if(event.target.closest('#open-admin')){event.preventDefault();event.stopImmediatePropagation();openGalleryAdmin();}
   }, true);
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closeLearnViewer(); });
-  document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show('hub');
+  document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show(location.hash === '#style-plan' ? 'style-plan' : 'hub');
 }
 window.addEventListener('load', () => {
   installNavigation();
@@ -250,7 +286,9 @@ window.addEventListener('load', () => {
     new MutationObserver(() => {
       const isOpen = !onboarding.classList.contains('hidden');
       if (wasOpen && !isOpen && appRoot.dataset.auraView !== 'account') {
-        requestAnimationFrame(() => show('hub'));
+        const profile = currentProfile();
+        if (profile) window.AuraMaxStylePlan?.createAndSave(profile, true);
+        requestAnimationFrame(() => show(profile ? 'style-plan' : 'hub'));
       }
       wasOpen = isOpen;
     }).observe(onboarding, { attributes: true, attributeFilter: ['class'] });
