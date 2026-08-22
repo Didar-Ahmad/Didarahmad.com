@@ -63,11 +63,16 @@ async function buyPersonalPlan(trigger) {
   }
 }
 
+// Register in the capture phase so the checkout handoff cannot be swallowed by
+// the app's delegated navigation handlers.  This is deliberately scoped to
+// payment buttons only; every other navigation control keeps its normal flow.
 document.addEventListener('click', event => {
   const button = event.target.closest('[data-aura-purchase]');
   if (!button) return;
-  event.preventDefault(); buyPersonalPlan(button);
-});
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  void buyPersonalPlan(button);
+}, true);
 
 window.AuraMaxPayments = { refreshAccess, isPremium: () => premium, buyPersonalPlan };
 refreshAccess();
