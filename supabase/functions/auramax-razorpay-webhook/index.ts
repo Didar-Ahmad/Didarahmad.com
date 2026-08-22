@@ -1,7 +1,17 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-function getServiceKey() { const raw = Deno.env.get("SUPABASE_SECRET_KEYS"); try { const keys = raw ? JSON.parse(raw) : {}; return keys.service_role ?? keys.service_role_key ?? keys.secret ?? Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY"); } catch { return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY"); } }
+function getServiceKey() {
+  const raw = Deno.env.get("SUPABASE_SECRET_KEYS");
+  try {
+    const keys = raw ? JSON.parse(raw) : {};
+    const namedKey = keys.service_role ?? keys.service_role_key ?? keys.secret;
+    if (typeof namedKey === "string" && namedKey.trim()) return namedKey;
+    const serverKey = Object.values(keys).find((value) => typeof value === "string" && value.startsWith("sb_secret_"));
+    if (typeof serverKey === "string") return serverKey;
+  } catch { /* fall through to legacy runtime key */ }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY");
+}
 async function hmac(value: string, secret: string) { const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]); return [...new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value)))].map(byte => byte.toString(16).padStart(2, "0")).join(""); }
 
 Deno.serve(async request => {

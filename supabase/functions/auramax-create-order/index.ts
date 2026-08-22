@@ -9,7 +9,16 @@ function getServiceKey() {
   if (raw) {
     try {
       const keys = JSON.parse(raw);
-      return keys.service_role ?? keys.service_role_key ?? keys.secret;
+      const namedKey = keys.service_role ?? keys.service_role_key ?? keys.secret;
+      if (typeof namedKey === "string" && namedKey.trim()) return namedKey;
+
+      // New Supabase projects expose secret keys as a keyed object rather than
+      // the legacy service_role property. Use the available server secret,
+      // never a publishable/anon key.
+      const serverKey = Object.values(keys).find((value) =>
+        typeof value === "string" && value.startsWith("sb_secret_")
+      );
+      if (typeof serverKey === "string") return serverKey;
     } catch { /* fall through to legacy runtime key */ }
   }
   return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SERVICE_ROLE_KEY");
