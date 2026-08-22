@@ -350,6 +350,90 @@ function installNavigation() {
   document.addEventListener('keydown', event => { if (event.key === 'Escape') closeLearnViewer(); });
   document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', event => {event.preventDefault();event.stopImmediatePropagation();show(button.dataset.view==='style'?'lookbook':button.dataset.view);}, true)); show(location.hash === '#style-plan' ? 'style-plan' : 'hub');
 }
+// Premium preview flow: visitors can build their profile, use a small set of
+// practical tips and explore a few LookBook examples before deciding whether
+// the full personal plan is right for them. This is deliberately transparent:
+// no purchase is claimed until a real membership checkout is connected.
+const fullAuraRenderHub = renderHub;
+const fullAuraRenderLookbook = renderLookbook;
+const fullAuraRenderStylePlan = renderStylePlan;
+
+function premiumGateMarkup(title, detail, options = {}) {
+  const button = options.button || 'Unlock your personal plan';
+  return `<section class="premium-gate" aria-label="Premium personal plan preview"><span class="premium-gate-kicker">PERSONAL PLAN</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(detail)}</p><ul><li>Personal recommendations based on your saved profile</li><li>Full LookBook access and complete guides</li><li>Structured routines, checklists and progress tools</li></ul><button class="button primary premium-gate-button" type="button" data-aura-unlock>${escapeHtml(button)} <span aria-hidden="true">→</span></button><p class="premium-gate-note">Your free profile and free tools stay available.</p></section>`;
+}
+
+function renderUnlockPreview() {
+  appRoot.dataset.auraView = 'premium-preview';
+  document.body.classList.add('aura-inner-view');
+  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page"><p class="eyebrow">AURAMAX PERSONAL PLAN</p><h2>Unlock your personal plan.</h2><p class="premium-preview-lede">You have explored the free foundation. Premium access will bring your saved profile, style direction, routines and learning tools into one guided plan.</p><div class="premium-preview-grid"><article><span>01</span><h3>Use your profile</h3><p>Turn your face, body and skin-tone choices into a practical starting point.</p></article><article><span>02</span><h3>Follow a clear routine</h3><p>Move through style, grooming and confidence habits at a steady pace.</p></article><article><span>03</span><h3>Save what works</h3><p>Keep outfit formulas, checklists and favourite looks in one place.</p></article></div><div class="premium-preview-action"><h3>Premium access is being prepared.</h3><p>Create a free AuraMax account now to save your profile and be ready when membership access opens.</p><button class="button primary" type="button" data-aura-account-signup>Create free account</button><button class="button secondary" type="button" data-aura-view="hub">Continue with free tools</button></div></section>`;
+  appRoot.querySelector('[data-aura-account-signup]')?.addEventListener('click', () => { window.location.href = 'account.html?mode=signup'; });
+}
+
+function renderLockedStylePlan() {
+  const profile = currentProfile();
+  if (!profile) { fullAuraRenderStylePlan(); return; }
+  const skinTone = profile.skinTone || 'your selected skin tone';
+  appRoot.dataset.auraView = 'style-plan';
+  document.body.classList.add('aura-inner-view');
+  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page style-plan-preview"><p class="eyebrow">YOUR SAVED PROFILE</p><h2>Your personal plan is ready to unlock.</h2><p class="premium-preview-lede">AuraMax has saved your face, body and ${escapeHtml(skinTone)} selections. Here is a preview of the type of direction your plan will organize.</p><div class="profile-preview-tags"><span>${escapeHtml(profile.faceShape || 'Face profile')}</span><span>${escapeHtml(profile.bodyType || 'Body profile')}</span><span>${escapeHtml(skinTone)}</span></div><div class="premium-preview-grid"><article><span>COLOUR</span><h3>Build around easy neutrals</h3><p>Start with two reliable base colours, then add one accent you enjoy wearing.</p></article><article><span>FIT</span><h3>Prioritize clean proportions</h3><p>Use comfortable shoulder fit, intentional trouser length and balanced footwear.</p></article><article><span>ROUTINE</span><h3>Keep one weekly reset</h3><p>Plan outfits, grooming basics and a small wardrobe improvement each week.</p></article></div>${premiumGateMarkup('Turn this preview into your personal plan.', 'Unlock detailed colours, outfit formulas, routines, checklists and saved progress tailored to your profile.')}</section>`;
+}
+
+function renderPremiumSection(type) {
+  const content = {
+    qa: { eyebrow: 'LOOKSMAX Q&A ADVANCED', title: 'Get clearer answers from your personal plan.', lead: 'Free visitors can use the profile and quick tips. Advanced Q&A becomes useful when answers can refer back to your saved direction.', samples: ['How do I make a simple outfit look more intentional?', 'What should I improve first: fit, grooming or wardrobe?'] },
+    guide: { eyebrow: 'LOOKSMAX COMPLETE GUIDE', title: 'Preview the complete guide, then unlock the full system.', lead: 'The full guide is organized as a practical reading plan with routines, examples, checklists and related looks.', samples: ['Foundation: build healthy, realistic habits', 'Style system: outfit formulas that are easy to repeat', '30-day reset: small actions you can actually sustain'] },
+    transformation: { eyebrow: '30-DAY TRANSFORMATION PLAN', title: 'Start with a three-day preview.', lead: 'Your free preview shows the pace. The complete personal plan keeps the full 30-day schedule, progress tracker and weekly resets together.', samples: ['Day 1 — Save your profile and choose one grooming priority', 'Day 2 — Review fit: shoulders, sleeve length and trouser break', 'Day 3 — Build one reliable outfit formula from what you own'] }
+  }[type];
+  appRoot.dataset.auraView = type;
+  document.body.classList.add('aura-inner-view');
+  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page"><p class="eyebrow">${content.eyebrow}</p><h2>${content.title}</h2><p class="premium-preview-lede">${content.lead}</p><div class="premium-sample-list">${content.samples.map((sample, index) => `<article><span>${String(index + 1).padStart(2, '0')}</span><p>${sample}</p><small>Free preview</small></article>`).join('')}</div>${premiumGateMarkup('Continue with the full personal plan.', 'Unlock the complete set of lessons, routines, examples and saved progress tools.')}</section>`;
+}
+
+function applyFreeQuickTipPreview() {
+  appRoot.classList.add('free-quick-preview');
+  const grid = appRoot.querySelector('.tips-grid');
+  if (!grid || appRoot.querySelector('.quick-premium-gate')) return;
+  grid.insertAdjacentHTML('afterend', `<div class="quick-premium-gate">${premiumGateMarkup('You have reached the five free quick tips.', 'Keep the free actions, or unlock your personal plan for the complete routines, Q&A and guide.')}</div>`);
+}
+
+renderHub = function renderHubWithFreeFoundation() {
+  fullAuraRenderHub();
+  const intro = appRoot.querySelector('.auramax-intro');
+  if (!intro || appRoot.querySelector('.free-foundation-banner')) return;
+  intro.insertAdjacentHTML('afterend', `<section class="free-foundation-banner"><p class="eyebrow">START FREE</p><h2>Build your foundation before you unlock more.</h2><div><span>✓ Free face & body profile</span><span>✓ Five practical quick tips</span><span>✓ A small LookBook preview</span></div><button class="button secondary" type="button" data-aura-unlock>Unlock your personal plan →</button></section>`);
+};
+
+renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
+  fullAuraRenderLookbook(selectedCategory);
+  appRoot.classList.add('free-lookbook-preview');
+  const cards = [...appRoot.querySelectorAll('[data-lookbook-item]')];
+  cards.slice(3).forEach(card => card.remove());
+  const grid = appRoot.querySelector('.lookbook-grid');
+  if (grid && !grid.querySelector('.lookbook-preview-lock')) grid.insertAdjacentHTML('beforeend', `<div class="lookbook-preview-lock">${premiumGateMarkup('See the rest of the LookBook in your personal plan.', 'You can explore these free examples now. Unlock the full library to save looks and see complete styling notes.')}</div>`);
+};
+
+renderStylePlan = renderLockedStylePlan;
+
+const originalAuraShow = show;
+show = function showWithPremiumPreview(view) {
+  if (view === 'qa' || view === 'guide' || view === 'transformation') { renderPremiumSection(view); return; }
+  originalAuraShow(view);
+  if (view === 'quick') applyFreeQuickTipPreview();
+};
+
+const originalAuraInstallNavigation = installNavigation;
+installNavigation = function installPremiumNavigation() {
+  originalAuraInstallNavigation();
+  document.addEventListener('click', event => {
+    const unlock = event.target.closest('[data-aura-unlock]');
+    if (!unlock) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    renderUnlockPreview();
+  }, true);
+};
+
 window.addEventListener('load', () => {
   installNavigation();
   connectGallery();
