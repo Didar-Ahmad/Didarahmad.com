@@ -72,7 +72,10 @@ async function submitReview(event) {
 }
 
 async function init() {
-  document.querySelectorAll('[data-review-scroll]').forEach(button => button.addEventListener('click', () => document.querySelector('#reviews')?.scrollIntoView({ behavior: 'smooth', block: 'start' })));
+  document.querySelectorAll('[data-review-scroll]').forEach(button => button.addEventListener('click', () => {
+    const target = button.dataset.reviewScroll === 'form' ? document.querySelector('#review-submit') : document.querySelector('#reviews');
+    target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }));
   if (!config.supabaseUrl || !config.supabasePublishableKey) {
     grid.innerHTML = '<p class="reviews-empty">Reviews will be available shortly.</p>';
     return;

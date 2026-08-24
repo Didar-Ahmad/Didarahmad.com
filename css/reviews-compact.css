@@ -1,0 +1,115 @@
+/* Reviews are a supporting proof point, not the main AuraMax journey. */
+.reviews-section {
+  margin-top: 2.5rem;
+  padding: 2.75rem 0;
+}
+
+.reviews-wrap {
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 1.25rem 1.5rem;
+}
+
+.reviews-intro h2 {
+  max-width: 480px;
+  margin: 0.25rem 0 0.55rem;
+  font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+  line-height: 1.04;
+}
+
+.reviews-intro > p:not(.eyebrow) {
+  max-width: 520px;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.reviews-actions {
+  margin-top: 1rem;
+  gap: 0.75rem;
+}
+
+.reviews-actions .button {
+  padding: 0.72rem 1rem;
+  font-size: 0.9rem;
+}
+
+.reviews-note {
+  font-size: 0.78rem;
+}
+
+.reviews-trust {
+  min-height: 0;
+  padding: 1rem;
+  border-radius: 14px;
+}
+
+.reviews-trust p {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.reviews-grid {
+  gap: 0.8rem;
+  margin-top: 0;
+}
+
+.review-card {
+  min-height: 160px;
+  padding: 1rem;
+  border-radius: 14px;
+}
+
+.review-card-body {
+  margin: 0.6rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.reviews-empty {
+  padding: 0.9rem 1rem;
+  font-size: 0.85rem;
+}
+
+.review-submit {
+  grid-template-columns: minmax(0, 0.55fr) minmax(0, 1.45fr);
+  gap: 1.25rem;
+  margin-top: 0.1rem;
+  padding: 1.25rem;
+  border-radius: 18px;
+}
+
+.review-submit h3 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: 1.5rem;
+  line-height: 1.12;
+}
+
+.review-submit-copy > p:not(.eyebrow) {
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.review-form-shell {
+  padding: 0.9rem;
+}
+
+.review-form {
+  gap: 0.65rem;
+}
+
+.review-form textarea {
+  min-height: 84px;
+}
+
+.review-gallery {
+  padding: 1.25rem 0 0;
+}
+
+@media (max-width: 800px) {
+  .reviews-section { margin-top: 2rem; padding: 2.25rem 0; }
+  .reviews-wrap { grid-template-columns: 1fr; gap: 1rem; }
+  .reviews-intro h2 { font-size: 2rem; }
+  .review-submit { grid-template-columns: 1fr; padding: 1rem; }
+  .reviews-trust { order: 0; }
+}
