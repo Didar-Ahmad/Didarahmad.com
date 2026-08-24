@@ -1,0 +1,13 @@
+/* Preserve strong copy contrast on the left while showing the hero portrait clearly. */
+.hero-bg {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 9, 13, 0.82) 0%,
+      rgba(7, 9, 13, 0.42) 43%,
+      rgba(7, 9, 13, 0.1) 70%,
+      rgba(7, 9, 13, 0.02)
+    ),
+    url('../assets/auramax-portrait.png') 68% 48% / cover;
+  filter: brightness(1.14) contrast(1.01) saturate(1.03);
+}
