@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/onboarding-light.css">
     <link rel="stylesheet" href="css/auramax-redesign.css">
     <link rel="stylesheet" href="css/gallery.css">
+    <link rel="stylesheet" href="css/reviews.css">
   </head>
   <body>
     <div id="onboarding" class="onboarding" aria-modal="true" role="dialog"></div>
@@ -26,6 +27,7 @@
           <button data-view="quick">Quick tips</button>
           <button data-view="qa">Q&amp;A</button>
           <button data-view="style">Style guide</button>
+          <button type="button" data-review-scroll>Reviews</button>
         </nav>
         <div class="account-actions"><a id="account-button" class="profile-button" href="account.html">Sign in</a><button id="profile-button" class="profile-button" aria-label="Edit guide profile">Guide profile</button></div>
       </div>
@@ -34,6 +36,47 @@
       <section id="home" class="hero"><div class="hero-bg"></div><div class="container hero-content"><p class="eyebrow">THE PRACTICAL LOOKSMAXX HANDBOOK</p><h1>Build your best<br><em>everyday presence.</em></h1><p>Clear visual guides for grooming, skin, hair, style, health and confidence. No scores. No dangerous shortcuts.</p><div class="hero-actions"><button class="button primary" data-view="hub">Explore categories</button><button class="button secondary" data-view="quick">Start with quick tips</button></div></div></section>
       <section class="container dashboard-intro"><div><p class="eyebrow">YOUR GUIDE</p><h2 id="profile-heading">A guide built around you.</h2><p id="profile-copy">Choose your face shape and body type to start exploring.</p></div><button class="text-link" id="edit-profile">Edit profile →</button></section>
       <section id="view-root" class="container view-root"></section>
+      <section id="reviews" class="reviews-section" aria-labelledby="reviews-title">
+        <div class="container reviews-wrap">
+          <div class="reviews-intro">
+            <p class="eyebrow">MEMBER REVIEWS</p>
+            <h2 id="reviews-title">Progress looks different on everyone.</h2>
+            <p>Read real member feedback, then share what helped you build a more practical routine.</p>
+            <div class="reviews-actions">
+              <button class="button primary" type="button" data-review-scroll>Write a review</button>
+              <span class="reviews-note">Sign in is required to publish.</span>
+            </div>
+          </div>
+          <div class="reviews-trust" aria-label="Review standards">
+            <span class="reviews-trust-icon">✓</span>
+            <div><strong>Member feedback</strong><p>Reviews are submitted by signed-in AuraMax members.</p></div>
+          </div>
+          <div id="reviews-grid" class="reviews-grid" aria-live="polite">
+            <p class="reviews-empty">Loading member reviews…</p>
+          </div>
+          <section id="review-submit" class="review-submit" aria-labelledby="review-submit-title">
+            <div class="review-submit-copy">
+              <p class="eyebrow">SHARE YOUR EXPERIENCE</p>
+              <h3 id="review-submit-title">What worked for you?</h3>
+              <p>Tell others which guide, habit, or outfit formula you found useful. Keep it honest, specific and respectful.</p>
+            </div>
+            <div class="review-form-shell">
+              <div id="review-auth-message" class="review-auth-message">Checking your sign-in status…</div>
+              <form id="review-form" class="review-form" hidden>
+                <label>Display name<input id="review-name" name="display_name" type="text" minlength="2" maxlength="40" required placeholder="How should your name appear?"></label>
+                <label>Rating<select id="review-rating" name="rating" required><option value="5">5 — Excellent</option><option value="4">4 — Very good</option><option value="3">3 — Helpful</option><option value="2">2 — Needs work</option><option value="1">1 — Not for me</option></select></label>
+                <label class="review-form-wide">Your review<textarea id="review-body" name="body" minlength="20" maxlength="700" required placeholder="What did you learn or improve? (minimum 20 characters)"></textarea></label>
+                <button class="button primary review-submit-button" type="submit">Publish my review</button>
+                <p id="review-form-status" class="review-form-status" aria-live="polite"></p>
+              </form>
+            </div>
+          </section>
+          <section id="review-gallery" class="review-gallery" aria-labelledby="review-gallery-title">
+            <div><p class="eyebrow">MEMBER STORIES</p><h3 id="review-gallery-title">Before &amp; after, with context.</h3></div>
+            <p>Coming soon: optional member photos and routines will be shared here with their consent.</p>
+          </section>
+        </div>
+      </section>
     </main>
     <footer class="site-footer"><div class="container footer-wrap"><span>© 2026 AuraMax</span><span>Practical education, not medical advice.</span></div></footer>
   <script src="js/auramax-config.js"></script>
@@ -43,6 +86,7 @@
     <script type="module" src="js/auramax-payments.js"></script>
     <script type="module" src="js/auramax-redesign.js"></script>
     <script type="module" src="js/account-admin.js"></script>
+    <script type="module" src="js/reviews.js"></script>
     <script src="js/back-navigation.js"></script>
   </body>
 </html>
