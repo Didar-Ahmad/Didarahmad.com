@@ -1,4 +1,4 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { supabaseClient } from './supabase-client.js';
 
 const config = window.AURAMAX_CONFIG || {};
 const grid = document.querySelector('#reviews-grid');
@@ -73,14 +73,16 @@ async function submitReview(event) {
 
 async function init() {
   document.querySelectorAll('[data-review-scroll]').forEach(button => button.addEventListener('click', () => {
+    if (document.body.classList.contains('aura-inner-view')) window.AuraMax?.show?.('hub');
     const target = button.dataset.reviewScroll === 'form' ? document.querySelector('#review-submit') : document.querySelector('#reviews');
-    target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    requestAnimationFrame(() => target?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
   }));
   if (!config.supabaseUrl || !config.supabasePublishableKey) {
     grid.innerHTML = '<p class="reviews-empty">Reviews will be available shortly.</p>';
     return;
   }
-  client = createClient(config.supabaseUrl, config.supabasePublishableKey);
+  client = supabaseClient;
+  if (!client) return;
   const { data } = await client.auth.getUser();
   renderAuthState(data.user);
   client.auth.onAuthStateChange((_event, session) => renderAuthState(session?.user));

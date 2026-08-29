@@ -1,3 +1,5 @@
+import { supabaseClient } from './supabase-client.js';
+
 const config = window.AURAMAX_CONFIG || {};
 const savedKey = 'auramax-web-saved-lessons';
 const contentKey = 'auramax-admin-content';
@@ -34,8 +36,8 @@ function loadLocalContent() {
 async function connectSupabase() {
   if (!config.supabaseUrl || !config.supabasePublishableKey) return;
   try {
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    supabase = createClient(config.supabaseUrl, config.supabasePublishableKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    supabase = supabaseClient;
+    if (!supabase) return;
     ({ data: { session } } = await supabase.auth.getSession());
     supabase.auth.onAuthStateChange((event, nextSession) => {
       session = nextSession;

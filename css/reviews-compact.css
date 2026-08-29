@@ -113,3 +113,13 @@
   .review-submit { grid-template-columns: 1fr; padding: 1rem; }
   .reviews-trust { order: 0; }
 }
+
+/* Keep signed-out controls hidden and lessons focused. */
+.review-form[hidden],
+.review-auth-message[hidden] {
+  display: none !important;
+}
+
+.aura-inner-view .reviews-section {
+  display: none;
+}

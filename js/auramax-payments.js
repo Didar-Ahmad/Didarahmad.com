@@ -1,4 +1,4 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { supabaseClient } from './supabase-client.js';
 
 const config = window.AURAMAX_CONFIG || {};
 const apiBase = `${config.supabaseUrl}/functions/v1`;
@@ -6,9 +6,7 @@ let client = null;
 let premium = false;
 
 function getClient() {
-  if (!client && config.supabaseUrl && config.supabasePublishableKey) {
-    client = createClient(config.supabaseUrl, config.supabasePublishableKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-  }
+  if (!client) client = supabaseClient;
   return client;
 }
 

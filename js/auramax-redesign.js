@@ -1,3 +1,5 @@
+import { supabaseClient } from './supabase-client.js';
+
 const appRoot = document.querySelector('#view-root');
 const config = window.AURAMAX_CONFIG || {};
 const profileStore = 'auramax-web-profile';
@@ -52,8 +54,8 @@ function closeLearnViewer() {
 async function connectGallery() {
   if (!config.supabaseUrl || !config.supabasePublishableKey) return;
   try {
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-    galleryClient = createClient(config.supabaseUrl, config.supabasePublishableKey);
+    galleryClient = supabaseClient;
+    if (!galleryClient) return;
     const { data, error } = await galleryClient.from('auramax_gallery_items').select('*').eq('is_published', true).order('created_at', { ascending: false });
     if (!error && Array.isArray(data)) {
       galleryItems = data;
@@ -135,7 +137,9 @@ function renderColours() {
     { key:'olive', label:'Olive skin', note:'Earthy and jewel tones complement the natural green-gold depth of olive skin.', best:['Emerald','Plum','Off-white','Terracotta','Deep blue','Warm grey'], careful:'Yellow-greens and dull khakis may echo your undertone too closely. Place a crisp neutral near your face.', formulas:['Emerald shirt + warm-grey trousers + black loafers','Off-white knit + deep-blue denim + brown boots','Terracotta tee + charcoal overshirt + ecru trousers'], swatch:['#087a55','#6c356f','#f4efe3','#b45336','#153a67'] },
     { key:'deep', label:'Deep / dark skin', note:'Clear contrast and saturated colour can look especially strong and intentional.', best:['Crisp white','Royal blue','Mustard','Emerald','Wine','Camel'], careful:'Head-to-toe dark brown or low-contrast charcoal may lose definition. Add cream, white, camel or a clear accent.', formulas:['Crisp white shirt + camel trousers + dark loafers','Royal-blue knit + grey trousers + white sneakers','Mustard overshirt + black tee + dark denim'], swatch:['#f7f5ee','#2454b5','#d69f19','#087a55','#78273d'] }
   ];
-  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head colour-guide-head"><p class="eyebrow">COLOR COMBINATION · SKIN-TONE GUIDE</p><h2>Choose colours that bring your face forward.</h2><p>Start with your approximate skin depth, then choose a category to see recommended colours, caution colours and ready-to-wear outfit formulas.</p></section>${learnGalleryMarkup('Color Combination')}<nav class="skin-tone-nav" aria-label="Choose a skin-tone guide">${skinGuides.map((guide,index)=>`<button type="button" class="${index===0?'active':''}" data-skin-guide="${guide.key}">${guide.label}</button>`).join('')}</nav><div>${skinGuides.map((guide,index)=>`<article class="skin-guide-card ${index===0?'active':''}" data-skin-panel="${guide.key}"><header><div><p class="eyebrow">PERSONALISED STARTING POINT</p><h3>${guide.label}</h3><p>${guide.note}</p></div><div class="skin-palette">${guide.swatch.map((colour,i)=>`<span style="--swatch:${colour}" title="${guide.best[i]}"></span>`).join('')}</div></header><section><h4>Colours to try first</h4><div class="colour-chips">${guide.best.map(colour=>`<span>${colour}</span>`).join('')}</div></section><section class="colour-caution"><h4>Use thoughtfully</h4><p>${guide.careful}</p></section><section><h4>Ready-to-wear outfit formulas</h4><ol class="outfit-formulas">${guide.formulas.map(formula=>`<li>${formula}</li>`).join('')}</ol></section></article>`).join('')}</div>`;
+  const savedSkinTone = currentProfile()?.skinTone || '';
+  const selectedGuide = skinGuides.find(guide => savedSkinTone.toLowerCase().startsWith(guide.label.replace(' skin', '').toLowerCase())) || skinGuides[0];
+  appRoot.innerHTML = `${backButton()}<section class="auramax-page-head colour-guide-head"><p class="eyebrow">COLOR COMBINATION · SKIN-TONE GUIDE</p><h2>Choose colours that bring your face forward.</h2><p>Start with your approximate skin depth, then choose a category to save it to your profile and see recommended colours, caution colours and ready-to-wear outfit formulas.</p></section>${learnGalleryMarkup('Color Combination')}<nav class="skin-tone-nav" aria-label="Choose a skin-tone guide">${skinGuides.map(guide=>`<button type="button" class="${guide.key===selectedGuide.key?'active':''}" data-skin-guide="${guide.key}" data-skin-label="${guide.label.replace(' skin', '')}" aria-pressed="${guide.key===selectedGuide.key}">${guide.label}</button>`).join('')}</nav><div>${skinGuides.map(guide=>`<article class="skin-guide-card ${guide.key===selectedGuide.key?'active':''}" data-skin-panel="${guide.key}"><header><div><p class="eyebrow">PERSONALISED STARTING POINT</p><h3>${guide.label}</h3><p>${guide.note}</p></div><div class="skin-palette">${guide.swatch.map((colour,i)=>`<span style="--swatch:${colour}" title="${guide.best[i]}"></span>`).join('')}</div></header><section><h4>Colours to try first</h4><div class="colour-chips">${guide.best.map(colour=>`<span>${colour}</span>`).join('')}</div></section><section class="colour-caution"><h4>Use thoughtfully</h4><p>${guide.careful}</p></section><section><h4>Ready-to-wear outfit formulas</h4><ol class="outfit-formulas">${guide.formulas.map(formula=>`<li>${formula}</li>`).join('')}</ol></section></article>`).join('')}</div>`;
 }
 const lookbookCategories = ['Summer Fits', 'Formal', 'Denims', 'Tee', 'Luxury Casual', 'Old Money', 'Top Picks'];
 function renderLookbook(selectedCategory = 'All') {
@@ -321,8 +325,18 @@ function installNavigation() {
     if (skinControl) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      appRoot.querySelectorAll('[data-skin-guide]').forEach(button => button.classList.toggle('active', button === skinControl));
+      appRoot.querySelectorAll('[data-skin-guide]').forEach(button => {
+        const selected = button === skinControl;
+        button.classList.toggle('active', selected);
+        button.setAttribute('aria-pressed', String(selected));
+      });
       appRoot.querySelectorAll('[data-skin-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.skinPanel === skinControl.dataset.skinGuide));
+      const profile = currentProfile();
+      if (profile && skinControl.dataset.skinLabel) {
+        const updatedProfile = { ...profile, skinTone: skinControl.dataset.skinLabel };
+        localStorage.setItem(profileStore, JSON.stringify(updatedProfile));
+        window.AuraMaxStylePlan?.createAndSave(updatedProfile, true);
+      }
       skinControl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       return;
     }
@@ -373,10 +387,12 @@ function renderUnlockPreview() {
 function renderLockedStylePlan() {
   const profile = currentProfile();
   if (!profile) { fullAuraRenderStylePlan(); return; }
-  const skinTone = profile.skinTone || 'your selected skin tone';
+  const skinTone = profile.skinTone || null;
+  const savedSelections = skinTone ? `face, body and ${escapeHtml(skinTone)} skin guide` : 'face and body';
+  const profileTags = [profile.faceShape || profile.face || 'Face profile', profile.bodyType || profile.body || 'Body profile', skinTone].filter(Boolean);
   appRoot.dataset.auraView = 'style-plan';
   document.body.classList.add('aura-inner-view');
-  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page style-plan-preview"><p class="eyebrow">YOUR SAVED PROFILE</p><h2>Your personal plan is ready to unlock.</h2><p class="premium-preview-lede">AuraMax has saved your face, body and ${escapeHtml(skinTone)} selections. Here is a preview of the type of direction your plan will organize.</p><div class="profile-preview-tags"><span>${escapeHtml(profile.faceShape || 'Face profile')}</span><span>${escapeHtml(profile.bodyType || 'Body profile')}</span><span>${escapeHtml(skinTone)}</span></div><div class="premium-preview-grid"><article><span>COLOUR</span><h3>Build around easy neutrals</h3><p>Start with two reliable base colours, then add one accent you enjoy wearing.</p></article><article><span>FIT</span><h3>Prioritize clean proportions</h3><p>Use comfortable shoulder fit, intentional trouser length and balanced footwear.</p></article><article><span>ROUTINE</span><h3>Keep one weekly reset</h3><p>Plan outfits, grooming basics and a small wardrobe improvement each week.</p></article></div>${premiumGateMarkup('Turn this preview into your personal plan.', 'Unlock detailed colours, outfit formulas, routines, checklists and saved progress tailored to your profile.')}</section>`;
+  appRoot.innerHTML = `${backButton('Back to free tools')}<section class="premium-preview-page style-plan-preview"><p class="eyebrow">YOUR SAVED PROFILE</p><h2>Your personal plan preview is ready.</h2><p class="premium-preview-lede">AuraMax has saved your ${savedSelections}. ${skinTone ? 'Here is a preview of the direction your plan will organise.' : 'Choose a skin-depth guide in Color Combination to complete your colour recommendations.'}</p><div class="profile-preview-tags">${profileTags.map(tag => `<span>${escapeHtml(tag)}</span>`).join('')}</div><div class="premium-preview-grid"><article><span>COLOUR</span><h3>Build around easy neutrals</h3><p>Start with two reliable base colours, then add one accent you enjoy wearing.</p></article><article><span>FIT</span><h3>Prioritise clean proportions</h3><p>Use comfortable shoulder fit, intentional trouser length and balanced footwear.</p></article><article><span>ROUTINE</span><h3>Keep one weekly reset</h3><p>Plan outfits, grooming basics and a small wardrobe improvement each week.</p></article></div>${premiumGateMarkup('Turn this preview into your personal plan.', 'Unlock detailed colours, outfit formulas, routines, checklists and saved progress tailored to your profile.')}</section>`;
 }
 
 function renderPremiumSection(type) {
