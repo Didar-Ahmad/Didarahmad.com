@@ -295,8 +295,132 @@ body {
 }
 
 @media (max-width: 760px) {
+  body { padding-bottom: 84px; }
+
+  .site-header .nav {
+    min-height: 60px;
+    gap: 8px;
+  }
+
+  .site-header .brand {
+    gap: 7px;
+    font-size: .82rem;
+    letter-spacing: .035em;
+  }
+
+  .site-header .brand-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .account-actions {
+    margin-left: auto;
+    gap: 5px;
+  }
+
+  .account-actions .profile-button {
+    min-height: 40px;
+    padding: 7px 10px;
+    white-space: nowrap;
+    font-size: 0;
+  }
+
+  #account-button::after,
+  #profile-button::after {
+    font-size: .74rem;
+    font-weight: 800;
+  }
+
+  #account-button::after { content: 'Account'; }
+  #profile-button::after { content: 'Profile'; }
+
+  .hero {
+    min-height: 560px;
+  }
+
+  .hero-content {
+    padding: 132px 0 58px;
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 12vw, 54px);
+    letter-spacing: -.06em;
+  }
+
+  .hero p:not(.eyebrow) {
+    margin-top: 18px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .hero-actions {
+    gap: 9px;
+    margin-top: 22px;
+  }
+
+  .hero-actions .button {
+    flex: 1;
+    padding: 12px 11px;
+    font-size: .82rem;
+  }
+
+  .dashboard-intro {
+    padding: 28px 0 18px;
+  }
+
+  .dashboard-intro h2 { font-size: 26px; }
+
+  .view-root {
+    padding-top: 28px;
+    padding-bottom: 112px;
+  }
+
+  .view-root > .text-link.back,
+  .reader > .text-link.back {
+    position: static;
+    min-height: 44px;
+    margin-bottom: 18px;
+    padding: 9px 14px;
+    font-size: .82rem;
+  }
+
+  .view-head h2,
+  .auramax-intro h2,
+  .auramax-page-head h2,
+  .student-start-head h2 {
+    font-size: clamp(30px, 9vw, 38px);
+    line-height: 1.04;
+  }
+
+  #view-root[data-aura-view="hub"] .aura-category > span {
+    display: inline-grid;
+    background: var(--gold);
+    color: #11151b;
+  }
+
   .mobile-nav {
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    padding: 4px;
+    border-radius: 15px;
     border-color: rgba(223, 185, 111, .22);
     background: rgba(8, 11, 16, .96);
   }
+
+  .mobile-nav button,
+  .mobile-nav a {
+    min-height: 42px;
+    gap: 1px;
+    font-size: .64rem;
+  }
+
+  .mobile-nav span { font-size: .92rem; }
+}
+
+@media (max-width: 380px) {
+  .container { width: min(100% - 28px, 1180px); }
+  .site-header .brand { font-size: .75rem; }
+  .account-actions .profile-button { padding-inline: 8px; }
+  .hero h1 { font-size: 41px; }
 }
