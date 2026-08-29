@@ -416,8 +416,8 @@ function applyFreeQuickTipPreview() {
 renderHub = function renderHubWithFreeFoundation() {
   fullAuraRenderHub();
   const intro = appRoot.querySelector('.auramax-intro');
-  if (!intro || appRoot.querySelector('.free-foundation-banner')) return;
-  intro.insertAdjacentHTML('afterend', `<section class="free-foundation-banner"><p class="eyebrow">START FREE</p><h2>Build your foundation before you unlock more.</h2><div><span>✓ Free face & body profile</span><span>✓ Five practical quick tips</span><span>✓ A small LookBook preview</span></div><button class="button secondary" type="button" data-aura-unlock>Unlock your personal plan →</button></section>`);
+  if (!intro || appRoot.querySelector('.student-start')) return;
+  intro.insertAdjacentHTML('afterend', `<section class="student-start" aria-labelledby="student-start-title"><div class="student-start-head"><div><p class="eyebrow">START HERE</p><h2 id="student-start-title">What would help you most today?</h2></div><p>Choose one simple path. You can explore everything else whenever you are ready.</p></div><div class="student-start-grid"><button class="student-start-card" type="button" data-aura-view="quick"><span>01</span><span><strong>Get a quick win</strong><small>Five useful actions you can try today</small></span><b aria-hidden="true">→</b></button><button class="student-start-card" type="button" data-aura-view="lookbook"><span>02</span><span><strong>Find outfit ideas</strong><small>Visual looks you can adapt to your wardrobe</small></span><b aria-hidden="true">→</b></button><button class="student-start-card" type="button" data-aura-view="style-plan"><span>03</span><span><strong>Build my plan</strong><small>Use your profile for personal recommendations</small></span><b aria-hidden="true">→</b></button></div></section>`);
 };
 
 renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
