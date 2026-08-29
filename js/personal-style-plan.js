@@ -8,9 +8,19 @@
       avoid: ['Very pale beige close to your skin tone', 'Neon shades near the face'],
     },
     'medium-wheatish': {
-      label: 'Medium / wheatish',
+      label: 'Medium',
       colours: ['Olive', 'Teal', 'Cream', 'Rust', 'Deep blue'],
       avoid: ['Washed-out grey-beige', 'Very fluorescent yellow'],
+    },
+    medium: {
+      label: 'Medium',
+      colours: ['Olive', 'Teal', 'Cream', 'Rust', 'Deep blue'],
+      avoid: ['Muted beige may need contrast', 'Balance fluorescent shades with a neutral'],
+    },
+    'not-sure-universal': {
+      label: 'Not sure / universal',
+      colours: ['Navy', 'Off-white', 'Charcoal', 'Teal', 'Forest green'],
+      avoid: ['There are no forbidden colours—adjust contrast or layering if a shade feels flat'],
     },
     olive: {
       label: 'Olive',

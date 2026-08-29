@@ -166,3 +166,58 @@
 @media (max-width: 420px) {
   #view-root[data-aura-view="hub"] .auramax-category-grid { grid-template-columns: 1fr; }
 }
+
+/* Colour guide: readable swatches and comparison-first guidance. */
+.colour-compare-note {
+  margin: -4px 0 16px;
+  color: var(--muted);
+  font-size: .86rem;
+}
+
+.skin-guide-card .skin-palette {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(82px, 1fr));
+  gap: 7px;
+  width: min(390px, 100%);
+}
+
+.skin-guide-card .skin-palette span {
+  position: relative;
+  display: flex;
+  align-items: end;
+  width: auto;
+  height: 76px;
+  margin: 0;
+  padding: 7px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, .68);
+  border-radius: 10px;
+}
+
+.skin-guide-card .skin-palette span b {
+  width: 100%;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(3, 6, 10, .74);
+  color: #fff;
+  font-size: .65rem;
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+}
+
+.colour-rule {
+  padding: 1.1rem 1.25rem;
+  border: 1px solid rgba(230, 188, 120, .32);
+  border-radius: 15px;
+  background: rgba(230, 188, 120, .08);
+}
+
+@media (max-width: 760px) {
+  .skin-guide-card .skin-palette {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .skin-guide-card .skin-palette span { height: 68px; }
+}

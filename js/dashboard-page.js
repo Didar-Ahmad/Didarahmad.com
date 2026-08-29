@@ -27,7 +27,7 @@ async function start() {
     renderStylePlan(profile);
     const plan = window.AuraMaxStylePlan?.load();
     if (plan && profile) {
-      const { error } = await client.from('auramax_personal_style_plans').upsert({ user_id: session.user.id, face_shape: profile.face || 'Not selected', body_type: profile.body || 'Not selected', skin_tone: profile.skinTone || 'Medium / wheatish', plan, updated_at: new Date().toISOString() });
+      const { error } = await client.from('auramax_personal_style_plans').upsert({ user_id: session.user.id, face_shape: profile.face || 'Not selected', body_type: profile.body || 'Not selected', skin_tone: profile.skinTone || 'Not sure / universal', plan, updated_at: new Date().toISOString() });
       if (error) console.warn('Personal style plan sync is waiting for the database update.', error.message);
     }
 
