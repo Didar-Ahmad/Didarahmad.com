@@ -373,6 +373,7 @@ body {
   .view-root {
     padding-top: 28px;
     padding-bottom: 112px;
+    scroll-margin-top: 68px;
   }
 
   .view-root > .text-link.back,
