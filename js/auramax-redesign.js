@@ -414,6 +414,11 @@ function applyFreeQuickTipPreview() {
   appRoot.classList.add('free-quick-preview');
   const grid = appRoot.querySelector('.tips-grid');
   if (!grid || appRoot.querySelector('.quick-premium-gate')) return;
+  const cards = [...grid.querySelectorAll('.tip-card')];
+  cards.slice(5).forEach(card => card.remove());
+  const resultCount = appRoot.querySelector('.qa-meta');
+  const visibleCount = Math.min(cards.length, 5);
+  if (resultCount) resultCount.textContent = `${visibleCount} free tip${visibleCount === 1 ? '' : 's'}`;
   grid.insertAdjacentHTML('afterend', `<div class="quick-premium-gate">${premiumGateMarkup('You have reached the five free quick tips.', 'Keep the free actions, or unlock your personal plan for the complete routines, Q&A and guide.')}</div>`);
 }
 
