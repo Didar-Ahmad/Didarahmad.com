@@ -381,6 +381,10 @@ function premiumGateMarkup(title, detail, options = {}) {
   return `<section class="premium-gate" aria-label="Premium personal plan preview"><span class="premium-gate-kicker">PERSONAL PLAN · ₹199 / 30 DAYS</span><h3>${escapeHtml(title)}</h3><p>${escapeHtml(detail)}</p><ul><li>Personal recommendations based on your saved profile</li><li>Full LookBook access and complete guides</li><li>Structured routines, checklists and progress tools</li></ul><button class="button primary premium-gate-button" type="button" data-aura-purchase>${escapeHtml(button)} <span aria-hidden="true">→</span></button><p class="premium-gate-note">One-time payment. No auto-renewal. Your free profile and tools stay available.</p></section>`;
 }
 
+function premiumPromptMarkup(context) {
+  return `<aside class="premium-prompt" aria-label="Premium access"><div><span>FREE PREVIEW</span><strong>${escapeHtml(context)}</strong><small>Unlock all content for ₹199 / 30 days. No auto-renewal.</small></div><button class="button primary" type="button" data-aura-purchase>Buy premium <span aria-hidden="true">→</span></button></aside>`;
+}
+
 function renderUnlockPreview() {
   appRoot.dataset.auraView = 'premium-preview';
   document.body.classList.add('aura-inner-view');
@@ -419,6 +423,8 @@ function applyFreeQuickTipPreview() {
   const resultCount = appRoot.querySelector('.qa-meta');
   const visibleCount = Math.min(cards.length, 5);
   if (resultCount) resultCount.textContent = `${visibleCount} free tip${visibleCount === 1 ? '' : 's'}`;
+  const pageHead = appRoot.querySelector('.view-head');
+  if (pageHead && !appRoot.querySelector('.premium-prompt')) pageHead.insertAdjacentHTML('afterend', premiumPromptMarkup('Five quick tips are included free.'));
   grid.insertAdjacentHTML('afterend', `<div class="quick-premium-gate">${premiumGateMarkup('You have reached the five free quick tips.', 'Keep the free actions, or unlock your personal plan for the complete routines, Q&A and guide.')}</div>`);
 }
 
@@ -437,6 +443,8 @@ renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
   appRoot.classList.add('free-lookbook-preview');
   const cards = [...appRoot.querySelectorAll('[data-lookbook-item]')];
   cards.slice(3).forEach(card => card.remove());
+  const pageHead = appRoot.querySelector('.auramax-page-head');
+  if (pageHead && !appRoot.querySelector('.premium-prompt')) pageHead.insertAdjacentHTML('afterend', premiumPromptMarkup('Three LookBook examples are included free.'));
   const grid = appRoot.querySelector('.lookbook-grid');
   if (grid && !grid.querySelector('.lookbook-preview-lock')) grid.insertAdjacentHTML('beforeend', `<div class="lookbook-preview-lock">${premiumGateMarkup('See the rest of the LookBook in your personal plan.', 'You can explore these free examples now. Unlock the full library to save looks and see complete styling notes.')}</div>`);
 };
