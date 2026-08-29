@@ -110,9 +110,24 @@
   }
 
   #view-root[data-aura-view="hub"] .aura-category p,
-  #view-root[data-aura-view="hub"] .aura-category b,
-  #view-root[data-aura-view="hub"] .aura-card-visual {
+  #view-root[data-aura-view="hub"] .aura-category b {
     display: none;
+  }
+
+  #view-root[data-aura-view="hub"] .aura-category {
+    padding-top: 92px;
+  }
+
+  #view-root[data-aura-view="hub"] .aura-card-visual {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    display: block;
+    height: 66px;
+  }
+
+  #view-root[data-aura-view="hub"] .visual-colours {
+    display: flex;
   }
 
   #view-root[data-aura-view="hub"] .aura-category h3 {
@@ -165,6 +180,18 @@
 
 @media (max-width: 420px) {
   #view-root[data-aura-view="hub"] .auramax-category-grid { grid-template-columns: 1fr; }
+
+  #view-root[data-aura-view="hub"] .aura-category {
+    min-height: 184px;
+    padding: 104px 1.15rem 1.15rem;
+  }
+
+  #view-root[data-aura-view="hub"] .aura-card-visual {
+    top: 14px;
+    right: 14px;
+    left: 14px;
+    height: 76px;
+  }
 }
 
 /* Colour guide: readable swatches and comparison-first guidance. */
