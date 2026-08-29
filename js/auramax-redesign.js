@@ -20,6 +20,7 @@ let activeLookbookArticleId = null;
 let activeGuideChapterId = null;
 let activeGuideLessonIndex = null;
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const displayCategory = value => String(value || '').replace(/^Color Combination$/i, 'Colour Combination');
 const currentProfile = () => JSON.parse(localStorage.getItem(profileStore) || 'null');
 const activeGallery = () => galleryItems.length ? galleryItems : JSON.parse(localStorage.getItem(galleryStore) || 'null') || galleryFallback;
 const imageMarkup = item => item.image_url ? `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy">` : `<div class="lookbook-image-placeholder"><span>${escapeHtml(item.category)}</span><strong>Image coming soon</strong></div>`;
@@ -27,7 +28,7 @@ const categoryItems = category => activeGallery().filter(item => item.category =
 const learnGalleryMarkup = category => {
   const items = categoryItems(category);
   if (!items.length) return '';
-  return `<section class="learn-gallery"><div class="learn-gallery-head"><div><p class="eyebrow">VIEW &amp; LEARN GALLERY</p><h3>Visual guides for ${escapeHtml(category)}</h3></div><span>${items.length} guide${items.length === 1 ? '' : 's'}</span></div><div class="learn-gallery-grid">${items.map(item => `<article class="learn-card">${imageMarkup(item)}<div class="learn-card-copy"><small>${escapeHtml(item.category)}</small><h3>${escapeHtml(item.title)}</h3><button type="button" class="learn-open" data-learn-item="${escapeHtml(item.id)}">View &amp; learn <span>→</span></button></div></article>`).join('')}</div></section>`;
+  return `<section class="learn-gallery"><div class="learn-gallery-head"><div><p class="eyebrow">VIEW &amp; LEARN GALLERY</p><h3>Visual guides for ${escapeHtml(displayCategory(category))}</h3></div><span>${items.length} guide${items.length === 1 ? '' : 's'}</span></div><div class="learn-gallery-grid">${items.map(item => `<article class="learn-card">${imageMarkup(item)}<div class="learn-card-copy"><small>${escapeHtml(displayCategory(item.category))}</small><h3>${escapeHtml(item.title)}</h3><button type="button" class="learn-open" data-learn-item="${escapeHtml(item.id)}">View &amp; learn <span>→</span></button></div></article>`).join('')}</div></section>`;
 };
 const appendCategoryGallery = category => appRoot.insertAdjacentHTML('beforeend', learnGalleryMarkup(category));
 
@@ -418,6 +419,8 @@ function applyFreeQuickTipPreview() {
 
 renderHub = function renderHubWithFreeFoundation() {
   fullAuraRenderHub();
+  const colourCardTitle = appRoot.querySelector('[data-aura-view="colours"] h3');
+  if (colourCardTitle) colourCardTitle.textContent = 'Colour Combination';
   const intro = appRoot.querySelector('.auramax-intro');
   if (!intro || appRoot.querySelector('.student-start')) return;
   intro.insertAdjacentHTML('afterend', `<section class="student-start" aria-labelledby="student-start-title"><div class="student-start-head"><div><p class="eyebrow">START HERE</p><h2 id="student-start-title">What would help you most today?</h2></div><p>Choose one simple path. You can explore everything else whenever you are ready.</p></div><div class="student-start-grid"><button class="student-start-card" type="button" data-aura-view="quick"><span>01</span><span><strong>Get a quick win</strong><small>Five useful actions you can try today</small></span><b aria-hidden="true">→</b></button><button class="student-start-card" type="button" data-aura-view="lookbook"><span>02</span><span><strong>Find outfit ideas</strong><small>Visual looks you can adapt to your wardrobe</small></span><b aria-hidden="true">→</b></button><button class="student-start-card" type="button" data-aura-view="style-plan"><span>03</span><span><strong>Build my plan</strong><small>Use your profile for personal recommendations</small></span><b aria-hidden="true">→</b></button></div></section>`);
@@ -433,7 +436,14 @@ renderLookbook = function renderLookbookWithPreview(selectedCategory = 'All') {
   if (grid && !grid.querySelector('.lookbook-preview-lock')) grid.insertAdjacentHTML('beforeend', `<div class="lookbook-preview-lock">${premiumGateMarkup('See the rest of the LookBook in your personal plan.', 'You can explore these free examples now. Unlock the full library to save looks and see complete styling notes.')}</div>`);
 };
 
-renderStylePlan = function renderStylePlanWithAccess() { if (window.AuraMaxPayments?.isPremium()) fullAuraRenderStylePlan(); else renderLockedStylePlan(); };
+renderStylePlan = function renderStylePlanWithAccess() {
+  if (window.AuraMaxPayments?.isPremium()) fullAuraRenderStylePlan();
+  else {
+    renderLockedStylePlan();
+    const previewLede = appRoot.querySelector('.premium-preview-lede');
+    if (previewLede) previewLede.textContent = previewLede.textContent.replace('Color Combination', 'Colour Combination');
+  }
+};
 
 const originalAuraShow = show;
 show = function showWithPremiumPreview(view) {

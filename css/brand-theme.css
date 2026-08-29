@@ -247,6 +247,49 @@ body {
 .review-form input::placeholder,
 .review-form textarea::placeholder { color: #929eaa; }
 
+/* Keep the LookBook useful when a remote editorial image is slow or unavailable. */
+.lookbook-card-open {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
+.lookbook-card-open > img,
+.lookbook-card-open > .lookbook-image-placeholder {
+  width: 100%;
+  min-height: 190px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  color: transparent;
+  background:
+    linear-gradient(135deg, rgba(223, 185, 111, .28), transparent 42%),
+    linear-gradient(315deg, rgba(83, 123, 155, .32), transparent 48%),
+    #18232e;
+}
+
+.lookbook-card-open > div:last-child {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.lookbook-card h3,
+.learn-card h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.lookbook-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.lookbook-read-link { margin-top: auto; }
+
 :focus-visible {
   outline-color: var(--gold);
 }

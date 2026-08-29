@@ -4,6 +4,7 @@ const config = window.AURAMAX_CONFIG || {};
 const grid = document.querySelector('#reviews-grid');
 const form = document.querySelector('#review-form');
 const authMessage = document.querySelector('#review-auth-message');
+const reviewNote = document.querySelector('.reviews-note');
 const status = document.querySelector('#review-form-status');
 const nameInput = document.querySelector('#review-name');
 let client = null;
@@ -33,6 +34,7 @@ async function loadReviews() {
 function renderAuthState(user) {
   signedInUser = user || null;
   if (!user) {
+    if (reviewNote) reviewNote.textContent = 'Sign in is required to publish.';
     authMessage.hidden = false;
     form.hidden = true;
     authMessage.innerHTML = 'Please <a href="account.html">sign in or create an account</a> to publish a review.';
@@ -40,6 +42,7 @@ function renderAuthState(user) {
   }
   authMessage.hidden = true;
   form.hidden = false;
+  if (reviewNote) reviewNote.textContent = 'Signed in — your review can be published.';
   const suggestedName = (user.user_metadata?.display_name || user.email?.split('@')[0] || '').replace(/[._-]+/g, ' ');
   if (!nameInput.value) nameInput.value = suggestedName.replace(/\b\w/g, letter => letter.toUpperCase());
 }
