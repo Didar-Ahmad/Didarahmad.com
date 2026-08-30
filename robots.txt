@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /account.html
+Disallow: /dashboard.html
+Disallow: /admin.html
+
+Sitemap: https://www.didarahmad.com/sitemap.xml
